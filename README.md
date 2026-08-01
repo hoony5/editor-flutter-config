@@ -1,10 +1,10 @@
 # Flutter Project Settings
 
-Let's be honest — managing Flutter platform configs is annoying. You're jumping between Xcode for iOS permissions, Android Studio for manifest entries, editing `Info.plist` by hand, wondering if you forgot to add that Bluetooth permission on Android...
+**One sidebar. Every platform setting.** Inspired by Unity's Project Settings window — where Player Settings, Quality, Input, and Physics all live in one place — this extension does the same for Flutter. No more jumping between Xcode, Android Studio, and hand-editing `Info.plist`.
 
-This extension puts all of that in one sidebar panel. Toggle permissions, edit env files, preview assets, check your routes, manage code generation — without leaving VSCode.
+Permissions, environment files, assets, routing, dependencies, code generation — all managed from a single centralized panel in your editor. Change a permission toggle, and the extension writes the correct entry to `Info.plist`, `AndroidManifest.xml`, or `.entitlements` for you.
 
-It works with **any Flutter project**. No special setup, no template lock-in. If you've got a `pubspec.yaml`, you're good.
+Works with **any Flutter project**. No template lock-in. If you've got a `pubspec.yaml`, you're good.
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-106%20passing-brightgreen.svg)](test/)
@@ -148,6 +148,42 @@ When you toggle a permission and hit save:
 5. **Secret guard** — if the key or value looks like a secret (password, token, api_key) and the file is git-tracked, the write is **blocked**
 
 Existing keys are **updated in place** — no duplicates. New keys are inserted before the closing `</dict>` (plist) or before `<application>` (manifest).
+
+---
+
+## Roadmap — deepening what's here
+
+Not adding more tabs. Making the existing ones sharper.
+
+**Platform / Permissions**
+- Per-permission "what breaks if you skip this" impact descriptions
+- Permission usage timeline — when each permission was added/removed (git blame integration)
+- Platform-specific deep-link editors (iOS Associated Domains, Android App Links) with validation
+
+**Env**
+- Env variable type inference (URL, path, boolean, number) with format validation
+- Side-by-side diff with inline edit (fix missing keys without switching files)
+- Env template generation from code analysis (scan `String.fromEnvironment` calls)
+
+**Assets**
+- Drag-and-drop import with automatic `pubspec.yaml` registration
+- Asset usage graph — which Dart files reference which assets
+- Batch optimization (convert all PNGs to WebP with one click)
+
+**Codegen**
+- Build output streaming in the sidebar (live build_runner log)
+- Per-file regeneration (right-click a `.dart` file → regenerate)
+- Dependency graph visualization (which generated files depend on which sources)
+
+**Router**
+- Route parameter preview (show what `state.pathParameters` contains per route)
+- Navigation flow diagram (visual graph of route transitions)
+- Deep-link test generator (copy a `adb shell am start` or `xcrun simctl openurl` command)
+
+**CLI**
+- `fat doctor` — diagnose common misconfigurations (missing permissions, stale codegen, env mismatches)
+- `fat diff` — compare platform configs between git branches
+- JSON schema output for CI integration
 
 ---
 

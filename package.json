@@ -1,7 +1,7 @@
 {
   "name": "editor-flutter-config",
   "displayName": "Flutter Project Settings",
-  "description": "Flutter project settings, permissions, assets, routing & tool launcher — sidebar UI + CLI for agents",
+  "description": "Centralized Flutter project settings — permissions, env, assets, routing, codegen in one sidebar. Inspired by Unity Project Settings.",
   "version": "0.2.4",
   "publisher": "hoony5",
   "license": "Apache-2.0",
