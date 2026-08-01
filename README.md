@@ -151,39 +151,17 @@ Existing keys are **updated in place** — no duplicates. New keys are inserted 
 
 ---
 
-## Roadmap — deepening what's here
+## AI-Agent Ready
 
-Not adding more tabs. Making the existing ones sharper.
+This extension is designed to be used by AI coding agents (Claude Code, Qwen Code, OpenAI Codex, etc.) as a **project context loader**. Instead of an agent parsing 30+ platform files, one CLI command gives it everything:
 
-**Platform / Permissions**
-- Per-permission "what breaks if you skip this" impact descriptions
-- Permission usage timeline — when each permission was added/removed (git blame integration)
-- Platform-specific deep-link editors (iOS Associated Domains, Android App Links) with validation
+```bash
+bin/fat snapshot   # → JSON: permissions, deps, assets, routes, env, codegen status
+```
 
-**Env**
-- Env variable type inference (URL, path, boolean, number) with format validation
-- Side-by-side diff with inline edit (fix missing keys without switching files)
-- Env template generation from code analysis (scan `String.fromEnvironment` calls)
+The agent gets structured JSON it can reason about — which permissions are configured, which are missing, what routes exist, what codegen needs to run — without reading a single `Info.plist` or `AndroidManifest.xml`.
 
-**Assets**
-- Drag-and-drop import with automatic `pubspec.yaml` registration
-- Asset usage graph — which Dart files reference which assets
-- Batch optimization (convert all PNGs to WebP with one click)
-
-**Codegen**
-- Build output streaming in the sidebar (live build_runner log)
-- Per-file regeneration (right-click a `.dart` file → regenerate)
-- Dependency graph visualization (which generated files depend on which sources)
-
-**Router**
-- Route parameter preview (show what `state.pathParameters` contains per route)
-- Navigation flow diagram (visual graph of route transitions)
-- Deep-link test generator (copy a `adb shell am start` or `xcrun simctl openurl` command)
-
-**CLI**
-- `fat doctor` — diagnose common misconfigurations (missing permissions, stale codegen, env mismatches)
-- `fat diff` — compare platform configs between git branches
-- JSON schema output for CI integration
+Every CLI command outputs JSON. Every feature in the sidebar has a CLI equivalent. The extension is the UI; the CLI is the API.
 
 ---
 
