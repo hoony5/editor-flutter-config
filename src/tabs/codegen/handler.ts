@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as yaml from 'yaml';
 import * as vscode from 'vscode';
 import { readText } from '../../shared/fileUtils';
+import { getDartCmd } from '../../shared/execUtils';
 import { trackTerminal } from '../../shared/terminals';
 import type { PostFn } from '../../types';
 
@@ -100,10 +101,11 @@ export function scanCodegenStatus(root: string, post: PostFn): void {
 }
 
 export function runBuildRunner(root: string, mode: string, _post: PostFn): void {
+  const d = getDartCmd(root);
   const cmds: Record<string, string> = {
-    build: './tool/bin/dartw run build_runner build --delete-conflicting-outputs',
-    watch: './tool/bin/dartw run build_runner watch --delete-conflicting-outputs',
-    clean: './tool/bin/dartw run build_runner clean',
+    build: `${d} run build_runner build --delete-conflicting-outputs`,
+    watch: `${d} run build_runner watch --delete-conflicting-outputs`,
+    clean: `${d} run build_runner clean`,
   };
   const cmd = cmds[mode];
   if (!cmd) return;
@@ -118,7 +120,7 @@ export function runBuildFilter(root: string, file: string): void {
   const terminal = vscode.window.createTerminal({ name: 'Build Runner (filter)', cwd: root });
   trackTerminal(terminal);
   terminal.show();
-  terminal.sendText(`./tool/bin/dartw run build_runner build --delete-conflicting-outputs --build-filter="${safe}"`);
+  terminal.sendText(`${getDartCmd(root)} run build_runner build --delete-conflicting-outputs --build-filter="${safe}"`);
 }
 
 export function saveBuildYaml(root: string, post: PostFn, content: string): void {

@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import * as vscode from 'vscode';
-import { readManifest } from '../../shared/execUtils';
+import { readManifest, getDartCmd } from '../../shared/execUtils';
 import { readText } from '../../shared/fileUtils';
 import { sanitizeShellArg } from '../../shared/security';
 import { trackTerminal } from '../../shared/terminals';
@@ -67,13 +67,13 @@ export function scanToolEntries(root: string): ScannedTool[] {
   return results.sort((a, b) => a.group.localeCompare(b.group) || a.file.localeCompare(b.file));
 }
 
-export function getToolCommand(file: string, runtime: string): string {
+export function getToolCommand(root: string, file: string, runtime: string): string {
   const safeFile = file.replace(/[;|&$`()[\]{}<>!#~]/g, '');
   const q = `tool/${safeFile}`;
   const ext = path.extname(safeFile);
   const cmds: Record<string, string> = {
     '.sh': `bash "${q}"`, '.bash': `bash "${q}"`, '.zsh': `zsh "${q}"`,
-    '.dart': `./tool/bin/dartw run "${q}"`,
+    '.dart': `${getDartCmd(root)} run "${q}"`,
     '.py': `python3 "${q}"`, '.js': `node "${q}"`, '.mjs': `node "${q}"`,
     '.ts': `npx tsx "${q}"`, '.tsx': `npx tsx "${q}"`,
     '.go': `go run "${q}"`, '.rb': `ruby "${q}"`,
@@ -91,7 +91,7 @@ export function getToolCommand(file: string, runtime: string): string {
 }
 
 export function runScannedTool(root: string, file: string, runtime: string): void {
-  const cmd = getToolCommand(file, runtime);
+  const cmd = getToolCommand(root, file, runtime);
   const name = file.split('/').pop() ?? file;
   const terminal = vscode.window.createTerminal({ name: `Tool: ${name}`, cwd: root });
   trackTerminal(terminal); terminal.show();
@@ -100,7 +100,7 @@ export function runScannedTool(root: string, file: string, runtime: string): voi
 
 export function runScannedToolLoop(root: string, file: string, runtime: string, intervalSec: number): void {
   const sec = Math.max(1, Math.floor(Number(intervalSec)) || 60);
-  const cmd = getToolCommand(file, runtime);
+  const cmd = getToolCommand(root, file, runtime);
   const name = file.split('/').pop() ?? file;
   const terminal = vscode.window.createTerminal({ name: `Loop: ${name}`, cwd: root });
   trackTerminal(terminal); terminal.show();
@@ -134,7 +134,7 @@ export function runToolLoop(root: string, toolId: string, inputs: Record<string,
 
 export function runCodegenScript(root: string, file: string): void {
   const safeFile = file.replace(/[^a-zA-Z0-9_./-]/g, '');
-  const cmd = path.extname(safeFile) === '.dart' ? `./tool/bin/dartw run ${safeFile}` : `bash ${safeFile}`;
+  const cmd = path.extname(safeFile) === '.dart' ? `${getDartCmd(root)} run ${safeFile}` : `bash ${safeFile}`;
   const name = safeFile.split('/').pop() ?? safeFile;
   const terminal = vscode.window.createTerminal({ name: `Codegen: ${name}`, cwd: root });
   trackTerminal(terminal); terminal.show();

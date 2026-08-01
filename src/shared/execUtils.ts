@@ -11,6 +11,14 @@ export function readManifest(root: string): Manifest | null {
   try { return yaml.parse(readText(p)) as Manifest; } catch { return null; }
 }
 
+export function getFlutterCmd(root: string): string {
+  return fs.existsSync(path.join(root, 'tool', 'bin', 'flutterw')) ? './tool/bin/flutterw' : 'flutter';
+}
+
+export function getDartCmd(root: string): string {
+  return fs.existsSync(path.join(root, 'tool', 'bin', 'dartw')) ? './tool/bin/dartw' : 'dart';
+}
+
 export function getGitStatus(root: string): { branch: string; dirty: number; lastCommit: string } {
   try {
     const branch = execSync('git branch --show-current', { cwd: root, encoding: 'utf-8', timeout: 5000 }).trim();

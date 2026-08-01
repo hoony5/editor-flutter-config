@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { readJson, readText } from '../../shared/fileUtils';
+import { getFlutterCmd, getDartCmd } from '../../shared/execUtils';
 import { safePath } from '../../shared/security';
 import { trackTerminal } from '../../shared/terminals';
 import type { PostFn } from '../../types';
@@ -109,8 +110,8 @@ export function composeAndRun(root: string, target: string): void {
   const terminal = vscode.window.createTerminal({ name: `Flutter Run (${t})`, cwd: root });
   trackTerminal(terminal); terminal.show();
   terminal.sendText(
-    `./tool/bin/dartw run tool/env/compose_dart_defines.dart --target ${t} --output build/config/${t}.json && ` +
-    `./tool/bin/flutterw run --dart-define-from-file=build/config/${t}.json`,
+    `${getDartCmd(root)} run tool/env/compose_dart_defines.dart --target ${t} --output build/config/${t}.json && ` +
+    `${getFlutterCmd(root)} run --dart-define-from-file=build/config/${t}.json`,
   );
 }
 

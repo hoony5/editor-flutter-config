@@ -4,6 +4,7 @@ import { exec, execSync } from 'child_process';
 import { promisify } from 'util';
 import * as vscode from 'vscode';
 import { dirSize, scanAssets, findUnusedAssets, findUnusedScripts, readText } from '../../shared/fileUtils';
+import { getFlutterCmd, getDartCmd } from '../../shared/execUtils';
 import { validatePid } from '../../shared/security';
 import { trackTerminal } from '../../shared/terminals';
 import { readMetrics, addBuildRecord, addPerfRecord } from '../../shared/metrics';
@@ -51,7 +52,7 @@ export async function sendManageInfo(root: string, post: PostFn): Promise<void> 
 
   post({ type: 'manageInfo', buildSize, dartToolSize, iosPodsSize, macosPodsSize, pubCacheSize, outdatedCount: -1, genFileCount, codegenScripts });
 
-  execAsync('./tool/bin/dartw pub outdated --json 2>/dev/null', {
+  execAsync(`${getDartCmd(root)} pub outdated --json 2>/dev/null`, {
     cwd: root, encoding: 'utf-8', timeout: 15000, maxBuffer: 4 * 1024 * 1024,
   }).then(({ stdout }) => {
     const count = stdout ? (JSON.parse(stdout).packages || []).length : 0;
@@ -123,7 +124,7 @@ export function toggleBuildRunner(root: string, post: PostFn): void {
   buildRunnerTerminal = vscode.window.createTerminal({ name: 'Build Runner Watch', cwd: root });
   trackTerminal(buildRunnerTerminal);
   buildRunnerTerminal.show();
-  buildRunnerTerminal.sendText('./tool/bin/dartw run build_runner watch --delete-conflicting-outputs');
+  buildRunnerTerminal.sendText(`${getDartCmd(root)} run build_runner watch --delete-conflicting-outputs`);
   vscode.window.onDidCloseTerminal(t => {
     if (t === buildRunnerTerminal) { buildRunnerTerminal = null; post({ type: 'buildRunnerStatus', running: false }); }
   });
@@ -133,12 +134,13 @@ export function toggleBuildRunner(root: string, post: PostFn): void {
 // ── Test Runner ──
 
 export function runTests(root: string, mode: string, file?: string): void {
+  const f = getFlutterCmd(root);
   const cmds: Record<string, string> = {
-    all: './tool/bin/flutterw test',
-    coverage: './tool/bin/flutterw test --coverage',
+    all: `${f} test`,
+    coverage: `${f} test --coverage`,
   };
   const cmd = file
-    ? `./tool/bin/flutterw test ${file.replace(/[^a-zA-Z0-9_./-]/g, '')}`
+    ? `${f} test ${file.replace(/[^a-zA-Z0-9_./-]/g, '')}`
     : cmds[mode] ?? cmds.all;
   const terminal = vscode.window.createTerminal({ name: `Flutter Test (${mode})`, cwd: root });
   trackTerminal(terminal);
@@ -181,7 +183,7 @@ export async function runProfile(root: string, _post: PostFn): Promise<void> {
   const terminal = vscode.window.createTerminal({ name: 'Flutter Profile', cwd: root });
   trackTerminal(terminal);
   terminal.show();
-  terminal.sendText('./tool/bin/flutterw run --profile');
+  terminal.sendText(`${getFlutterCmd(root)} run --profile`);
   vscode.window.showInformationMessage('Profile mode started. Use DevTools to capture metrics, then record manually.');
 }
 

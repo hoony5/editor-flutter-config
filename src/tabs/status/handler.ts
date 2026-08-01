@@ -3,7 +3,7 @@ import { promisify } from 'util';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { readText, dirSize, regexFirst } from '../../shared/fileUtils';
-import { getGitStatus } from '../../shared/execUtils';
+import { getGitStatus, getFlutterCmd, getDartCmd } from '../../shared/execUtils';
 import { trackTerminal } from '../../shared/terminals';
 import type { PostFn } from '../../types';
 
@@ -32,9 +32,10 @@ export async function sendStatus(root: string, post: PostFn): Promise<void> {
   const pinnedFlutter = regexFirst(fvmrc, /"flutter"\s*:\s*"([^"]+)"/) ?? '';
   const javaHome = (await run('echo $JAVA_HOME')) || '(not set)';
 
+  const f = getFlutterCmd(root);
   const [flutterOut, devOut, simOut, javaOut, jdkOut, psOut] = await Promise.allSettled([
-    run('./tool/bin/flutterw --version', { cwd: root }),
-    run('./tool/bin/flutterw devices --machine-readable', { cwd: root }),
+    run(`${f} --version`, { cwd: root }),
+    run(`${f} devices --machine-readable`, { cwd: root }),
     run('xcrun simctl list devices -j', { timeout: 5000 }),
     run('java -version 2>&1', { cwd: root, timeout: 5000 }),
     run('/usr/libexec/java_home -V 2>&1', { timeout: 5000 }),
@@ -98,18 +99,20 @@ export function runAction(root: string, action: string, cmd?: string): void {
     terminal.sendText(cmd.replace(/[^a-zA-Z0-9_./ &=|>-]/g, ''));
     return;
   }
+  const f = getFlutterCmd(root);
+  const d = getDartCmd(root);
   const actions: Record<string, { cmd: string; name: string }> = {
-    'flutter-upgrade': { cmd: './tool/bin/flutterw upgrade', name: 'Flutter Upgrade' },
-    'flutter-clean': { cmd: './tool/bin/flutterw clean', name: 'Flutter Clean' },
-    'daemon-restart': { cmd: "pkill -f 'flutter daemon' 2>/dev/null; sleep 1; ./tool/bin/flutterw daemon &", name: 'Daemon Restart' },
-    'pub-get': { cmd: './tool/bin/flutterw pub get', name: 'Pub Get' },
-    'pub-cache-clean': { cmd: './tool/bin/dartw pub cache clean --force', name: 'Pub Cache Clean' },
+    'flutter-upgrade': { cmd: `${f} upgrade`, name: 'Flutter Upgrade' },
+    'flutter-clean': { cmd: `${f} clean`, name: 'Flutter Clean' },
+    'daemon-restart': { cmd: `pkill -f 'flutter daemon' 2>/dev/null; sleep 1; ${f} daemon &`, name: 'Daemon Restart' },
+    'pub-get': { cmd: `${f} pub get`, name: 'Pub Get' },
+    'pub-cache-clean': { cmd: `${d} pub cache clean --force`, name: 'Pub Cache Clean' },
     'build-runner': { cmd: './tool/codegen/build_runner_safe.sh', name: 'Build Runner' },
     'pod-install': { cmd: 'cd ios && pod install && cd ..', name: 'Pod Install' },
     'gradle-clean': { cmd: 'cd android && ./gradlew clean && cd ..', name: 'Gradle Clean' },
-    'devtools': { cmd: './tool/bin/dartw devtools', name: 'DevTools' },
-    'flutter-logs': { cmd: './tool/bin/flutterw logs', name: 'Flutter Logs' },
-    'doctor': { cmd: './tool/bin/flutterw doctor -v', name: 'Flutter Doctor' },
+    'devtools': { cmd: `${d} devtools`, name: 'DevTools' },
+    'flutter-logs': { cmd: `${f} logs`, name: 'Flutter Logs' },
+    'doctor': { cmd: `${f} doctor -v`, name: 'Flutter Doctor' },
   };
   const a = actions[action];
   if (!a) return;
