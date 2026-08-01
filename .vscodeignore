@@ -1,0 +1,12 @@
+.vscode/**
+src/**
+test/**
+scripts/**
+tsconfig.json
+vitest.config.mts
+node_modules/**
+!node_modules/yaml/**
+**/*.map
+**/*.ts
+!out/**
+AGENTS.md

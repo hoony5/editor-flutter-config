@@ -1,0 +1,78 @@
+{
+  "name": "editor-flutter-config",
+  "displayName": "Flutter Project Settings",
+  "description": "Flutter project settings, permissions, assets, routing & tool launcher — sidebar UI + CLI for agents",
+  "version": "0.2.0",
+  "publisher": "hoony5",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hoony5/editor-flutter-config"
+  },
+  "homepage": "https://block.salmeun.com",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization",
+    "Linters"
+  ],
+  "keywords": [
+    "flutter",
+    "dart",
+    "permissions",
+    "assets",
+    "gorouter",
+    "pubspec",
+    "configuration"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "flutterAppConfig",
+          "title": "Flutter Project Settings",
+          "icon": "resources/gear.svg"
+        }
+      ]
+    },
+    "views": {
+      "flutterAppConfig": [
+        {
+          "type": "webview",
+          "id": "flutterAppConfig.settingsView",
+          "name": "Project Settings"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "flutterAppConfig.open",
+        "title": "Open Project Settings",
+        "category": "Flutter App"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./ && node scripts/build-webview.js",
+    "watch": "tsc -watch -p ./",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.96.0",
+    "esbuild": "^0.28.1",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.10"
+  }
+}

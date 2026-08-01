@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# fat - Flutter App Tools CLI
+# Usage: fat <command> [--json] [--root <dir>]
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+EXT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+exec node "$EXT_DIR/out/cli.js" "$@"
