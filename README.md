@@ -1,185 +1,155 @@
 # Flutter Project Settings
 
-Flutter 프로젝트의 **설정·권한·에셋·라우팅·의존성**을 VSCode 사이드바에서 통합 관리하는 확장.
-CLI(`fat`)를 통해 AI 에이전트·터미널에서도 동일 기능을 JSON으로 조회할 수 있습니다.
+> Manage your Flutter project's **permissions, environment, assets, routing, dependencies, and code generation** — all from the VSCode sidebar. No more switching between Xcode, Android Studio, and text editors.
 
-> **특정 Flutter 템플릿에 종속되지 않습니다.** `pubspec.yaml`과 플랫폼 설정 파일이 있는 모든 Flutter 프로젝트에서 동작합니다.
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-106%20passing-brightgreen.svg)](test/)
+[![VSCode](https://img.shields.io/badge/VSCode-1.96%2B-007ACC.svg)](https://code.visualstudio.com)
+
+<!-- Replace with actual screenshot -->
+<!-- ![Screenshot](resources/screenshot.png) -->
 
 ---
 
-## 설치
+## Features
 
-### VSIX (GitHub Releases)
+### 🔐 Platform Permissions
+- **40+ permissions** organized by category (Camera, Location, Bluetooth, Notifications, etc.)
+- Per-platform toggles (iOS / Android / macOS) with SDK version badges
+- Official documentation links (Apple / Android / Firebase) for each permission
+- **Reverse analysis**: scans your `lib/` code and warns when you use an API (e.g., `Geolocator`) but haven't configured the corresponding permission
+- Dangerous settings warnings (ATS, cleartext traffic) with instant tooltips
+- Staged editing with confirmation dialog and XML validation + auto-rollback
 
-[Releases](https://github.com/hoony5/editor-flutter-config/releases)에서 `.vsix` 다운로드 →
+### 🌍 Environment Management
+- Auto-discovers all env/config files across your project (JSON + dotenv)
+- Inline key-value editing with folder-style variable display
+- **Env Diff**: compare two env files side-by-side with missing/mismatch highlighting
+- One-click Compose & Run with `--dart-define-from-file`
+
+### 🛠 Tools
+- Auto-scans `tool/` directory for scripts (25+ runtimes: Dart, Python, Shell, Node, Go, etc.)
+- Accordion groups with inline README preview
+- ▶ Run / ⟳ Repeat with configurable interval (sec/min)
+
+### 📦 Pubspec Manager
+- **Dependencies**: search, paginate, dev/release separation, direct `pub.dev` links
+- **Assets**: folder tree with thumbnails, font/audio/video preview, syntax-highlighted text preview (JSON, CSV, XML, Markdown)
+- Asset optimization suggestions (WebP conversion, resize, H.264)
+- Parse error banner for invalid `pubspec.yaml`
+
+### ⚙️ Codegen Hub
+- `build_runner` management: build / watch / clean from the sidebar
+- Annotation scanner: `@freezed`, `@riverpod`, `@RestApi`, `@JsonSerializable`, `@injectable`
+- **Missing generation detection**: warns when annotated classes lack generated files
+- `build.yaml` accordion editor
+
+### 🗺 Router
+- Parses GoRouter configuration including `StatefulShellRoute`, `StatefulShellBranch`, and nested routes
+- Resolves route constants (e.g., `AppRoutes.home` → `/home`)
+- Click any widget name to jump to its source line
+
+### 📊 Status & Manage
+- SDK versions, FVM pin, devices/simulators, Git status, disk usage
+- Build cache cleanup, test runner, release checklist
+- Process scanner with kill
+
+### 🔍 Lint
+- Toggle `analysis_options.yaml` rules on/off
+
+---
+
+## CLI for AI Agents
+
+Every feature is also available as a CLI that outputs JSON — designed for AI coding agents to load project context in one command:
+
+```bash
+bin/fat snapshot          # Full project snapshot (permissions + deps + assets + routes + env)
+bin/fat platform          # Platform config & permissions
+bin/fat deps              # Dependencies & SDK constraints
+bin/fat routes            # GoRouter route tree
+bin/fat checklist         # Release readiness checklist
+bin/fat env               # Env file listing
+bin/fat env-diff a.json b.json  # Key-by-key diff
+bin/fat tools             # Available tool scripts
+bin/fat metrics           # Build size & performance history
+```
+
+---
+
+## Installation
+
+### From VSCode Marketplace
+Search **"Flutter Project Settings"** in the Extensions sidebar, or:
+```bash
+code --install-extension hoony5.editor-flutter-config
+```
+
+### From VSIX
+Download from [GitHub Releases](https://github.com/hoony5/editor-flutter-config/releases) →
 VSCode → Extensions → `···` → **Install from VSIX**
 
-### 개발 모드
-
+### From Source
 ```bash
 git clone https://github.com/hoony5/editor-flutter-config.git
 cd editor-flutter-config
 npm install && npm run compile
-# VSCode에서 F5
+# Press F5 in VSCode to launch Extension Development Host
 ```
 
 ---
 
-## 사이드바 탭 (8개)
+## Requirements
 
-### Platform
-- **Permissions** — 권한 카테고리별 폴더 UI
-  - 플랫폼별 토글 (iOS / Android / macOS), 설명·주의사항, SDK 버전 뱃지
-  - 권한별 공식 문서 링크 (Apple / Android / Firebase)
-  - 권장 패키지 설치 상태 + `+` 설치 버튼
-  - 위험 설정(ATS, cleartext 등) ⚠ 즉시 툴팁 경고
-  - `$(VAR)` 보간법 값 자동 감지
-- **Security / Signing / Build / Deep Links / App Info** — 플랫폼 설정 인라인 편집, 추가/제거, 저장/취소 staged
-
-### Env
-- 프로젝트 전체 env/config JSON 자동 스캔 (디렉토리 그룹핑)
-- 키-값 인라인 편집, 파일 삭제 staged (× → 취소선 → 저장 확정)
-- **Env Diff** — 파일 2개 키별 비교 (누락·불일치 하이라이트)
-- Compose & Run — `dart-define-from-file` 원클릭 실행
-
-### Tools
-- `tool/manifest.yaml` 선언형 툴 + 디렉토리 자동 스캔 (25개 런타임)
-- ▶ 실행 / ⟳ 반복 (인라인 interval, sec/min)
-
-### Manage
-- Build Cache · Platform Cache · Pub Cache 크기/정리
-- Codegen 스크립트 + Build Runner watch 토글 + Test Runner
-- Build Size 이력 · Performance Baseline · Release Checklist
-- 프로세스 스캔·kill · 에셋/미사용 탐지
-
-### Pubspec
-- **Project** — name · version · description
-- **Dependencies** — dev/release 분리, 검색, 페이지네이션, `pub.dev` 링크
-- **Assets** — 폴더 구조, 파일 리스팅 (썸네일), 폰트/오디오/비디오 미리보기, 경로 추가/삭제/자동스캔, 최적화 제안
-- **Config** — SDK 제약, 플랫폼, 폰트
-- 파싱 에러 → 상단 빨강 배너
-
-### Lint
-- `analysis_options.yaml` 룰 토글
-
-### Status
-- SDK 버전, FVM 핀, 디바이스/시뮬레이터, Git, 디스크
-
-### Router
-- GoRouter 라우트 트리 (경로·위젯·자식), 위젯 클릭 → 소스 이동
+- Any Flutter project with a `pubspec.yaml`
+- Auto-detects `tool/bin/flutterw` / `tool/bin/dartw` wrappers; falls back to standard `flutter` / `dart` commands
+- No project-specific configuration needed
 
 ---
 
-## CLI (`fat`)
+## Screenshots
+
+<!-- TODO: Add actual screenshots -->
+<!-- Place screenshots in resources/ and reference them here -->
+<!-- Recommended screenshots:
+  1. resources/screenshot-permissions.png — Permissions tab with folder UI
+  2. resources/screenshot-env.png — Env tab with diff view
+  3. resources/screenshot-pubspec.png — Pubspec assets with preview
+  4. resources/screenshot-codegen.png — Codegen Hub
+  5. resources/screenshot-router.png — Router tree
+-->
+
+---
+
+## Development
 
 ```bash
-bin/fat <command> [--root <dir>]
+npm run compile     # TypeScript + webview bundle
+npm test            # 106 tests (vitest)
+vsce package        # Build .vsix
 ```
 
-| 커맨드 | 설명 |
-|---|---|
-| `snapshot` | 프로젝트 전체 스냅샷 (JSON) |
-| `platform` | 플랫폼 설정·권한 |
-| `deps` | 의존성·SDK 제약·플랫폼 |
-| `routes` | GoRouter 라우트 트리 |
-| `checklist` | 릴리즈 체크리스트 |
-| `env` | env 파일 목록 |
-| `env-diff <a> <b>` | env 키별 diff |
-| `tools` | 툴 스크립트 목록 |
-| `metrics` | 빌드·퍼포먼스 이력 |
-| `assets` | 에셋 선언 목록 |
-
-모든 출력 JSON. `fat snapshot` 한 번이면 프로젝트 전체 컨텍스트 로드.
-
----
-
-## 폴더 구조
-
-```
-editor-flutter-config/
-├── package.json              # 확장 매니페스트
-├── tsconfig.json             # ES2022, CommonJS
-├── vitest.config.mts         # 테스트 설정
-├── LICENSE                   # Apache-2.0
-├── README.md / AGENTS.md
-├── .vscodeignore / .gitignore
-│
-├── bin/
-│   └── fat                   # CLI 셸 래퍼
-│
-├── resources/
-│   └── gear.svg              # 사이드바 아이콘
-│
-├── scripts/
-│   └── check-webview.js      # 빌드 시 webview JS 구문 검증
-│
-├── src/
-│   ├── extension.ts          # activate / deactivate
-│   ├── provider.ts           # WebviewViewProvider, 메시지 라우팅
-│   ├── cli.ts                # CLI 엔트리 (vscode mock)
-│   ├── types.ts              # 공유 인터페이스
-│   │
-│   ├── shared/               # 공통 모듈
-│   │   ├── fileUtils.ts      # 파일 I/O, YAML 파싱, 에셋 스캔
-│   │   ├── execUtils.ts      # manifest, git 상태
-│   │   ├── icons.ts          # SVG 아이콘
-│   │   ├── styles.ts         # 공용 CSS
-│   │   ├── security.ts       # safePath, sanitize, escapeRegex
-│   │   ├── terminals.ts      # 터미널 추적·정리
-│   │   └── metrics.ts        # 빌드·퍼포먼스 이력
-│   │
-│   ├── tabs/                 # 탭별 handler + view
-│   │   ├── platform/         # 권한 카탈로그(40+), 플랫폼 설정, 위험 경고
-│   │   ├── env/              # env 스캔, diff, staged 삭제
-│   │   ├── tools/            # 툴 스캔, 실행, 반복
-│   │   ├── manage/           # 캐시, 빌드러너, 테스트, 체크리스트
-│   │   ├── pubspec/          # 의존성, 에셋 미리보기, 최적화
-│   │   ├── lint/             # analysis_options 토글
-│   │   ├── status/           # SDK, 디바이스, git
-│   │   └── router/           # GoRouter 탐지·파싱·트리
-│   │
-│   └── webview/
-│       └── shell.ts          # HTML 조립, CSP, 메시지 격리
-│
-├── test/                     # vitest 58개
-│   ├── security.test.ts
-│   ├── fileUtils.test.ts
-│   ├── platform.test.ts
-│   ├── env.test.ts
-│   ├── pubspec.test.ts
-│   └── __mocks__/vscode.ts
-│
-└── node_modules/vscode/      # CLI용 mock (로컬 전용)
-```
-
----
-
-## UX 원칙
-
-- **아이콘 버튼** — 💾 ✕ + ▶ ⟳ ↻
-- **Staged 편집** — 토글/입력 → 메모리 → 저장 확정 / 취소 폐기
-- **CSS 툴팁** — ⚠ 호버 즉시 (네이티브 딜레이 없음)
-- **테마 대응** — light/dark 자동
-- **에러 격리** — 탭별 try/catch
-- **CSP** — 외부 리소스 차단
-
-## 보안
-
-- 커맨드 인젝션·경로 순회·Regex/YAML 인젝션 차단
-- Secret 가드 fail-closed · PID 검증
-
-## 빌드·테스트·배포
+## Publishing
 
 ```bash
-npm run compile     # tsc + webview 구문 검증
-npm test            # vitest 58개
-vsce package        # .vsix 생성
-vsce login hoony5   # Azure DevOps PAT (최초 1회)
-vsce publish patch  # 마켓플레이스 배포
+vsce login hoony5       # Azure DevOps PAT (first time only)
+vsce publish patch      # 0.2.0 → 0.2.1
+vsce publish minor      # 0.2.0 → 0.3.0
 ```
+
+---
+
+## Security
+
+- CSP with nonce (no `unsafe-inline` scripts)
+- Command injection prevention (`sanitizeShellArg`)
+- Path traversal protection (`safePath`)
+- Regex/YAML injection prevention (`escapeRegex`, `sanitizeYaml`)
+- Secret guard: blocks writing secrets to git-tracked files (fail-closed)
+- XML validation with auto-rollback on save failure
 
 ---
 
 ## License
 
-[Apache-2.0](LICENSE) — Copyright 2024-2026 Hoony (삶은계란) · https://block.salmeun.com
+[Apache-2.0](LICENSE) — Copyright 2024–2026 Hoony (삶은계란) · https://block.salmeun.com
