@@ -58,12 +58,16 @@ bin/fat env-diff develop.json release.json   # spot the missing keys
 
 ## Install
 
-**Marketplace** — search "Flutter Project Settings" in Extensions, or:
+Works with **VSCode and all VSCode-based editors** (Cursor, Windsurf, Antigravity, etc.)
+
+**Marketplace** (VSCode) — search "Flutter Project Settings", or:
 ```bash
 code --install-extension hoony5.editor-flutter-config
 ```
 
-**VSIX** — grab it from [GitHub Releases](https://github.com/hoony5/editor-flutter-config/releases) → Extensions → `···` → Install from VSIX
+**Cursor / Windsurf / Antigravity** — Extensions → `···` → **Install from VSIX** → select the `.vsix` from [GitHub Releases](https://github.com/hoony5/editor-flutter-config/releases)
+
+> ⚠️ **Android Studio** is IntelliJ-based and does **not** support VSCode extensions. A separate IntelliJ plugin would be needed.
 
 **From source**:
 ```bash
