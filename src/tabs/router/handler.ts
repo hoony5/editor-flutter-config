@@ -11,6 +11,7 @@ export interface RouteNode {
   file: string;
   line: number;
   children: RouteNode[];
+  params: string[];
 }
 
 export function scanRoutes(root: string, post: PostFn): void {
@@ -204,14 +205,18 @@ function parseRouteTree(lines: string[], file: string, constants: Map<string, st
         children.push(...childResult.nodes);
       }
 
+      const resolvedPath = path || (type === 'StatefulShellBranch' ? `[branch]` : '/');
+      const params = (resolvedPath.match(/:(\w+)/g) || []).map(p => p.substring(1));
+
       result.push({
         type,
-        path: path || (type === 'StatefulShellBranch' ? `[branch]` : '/'),
+        path: resolvedPath,
         name,
         widget,
         file,
         line: lineNum,
         children,
+        params,
       });
 
       j = blockEnd + 1;

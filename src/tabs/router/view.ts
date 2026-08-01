@@ -22,7 +22,7 @@ function renderRoutes(m){
   el.innerHTML=h;
   el.querySelectorAll('.file-link').forEach(function(l){l.addEventListener('click',function(){V.postMessage({type:'openFile',file:l.dataset.open});});});
   el.querySelectorAll('.route-node').forEach(function(n){n.addEventListener('click',function(e){
-    if(e.target.closest('.route-link'))return;
+    if(e.target.closest('.route-link')||e.target.closest('.route-deeplink'))return;
     var body=n.querySelector('.route-body');
     var arrow=n.querySelector('.route-arrow');
     if(body){body.style.display=body.style.display==='none'?'block':'none';}
@@ -31,6 +31,18 @@ function renderRoutes(m){
   el.querySelectorAll('.route-link').forEach(function(l){l.addEventListener('click',function(e){
     e.stopPropagation();
     V.postMessage({type:'openFileAtLine',file:l.dataset.file,line:parseInt(l.dataset.line)});
+  });});
+  el.querySelectorAll('.route-deeplink').forEach(function(b){b.addEventListener('click',function(e){
+    e.stopPropagation();
+    var existing=b.parentElement.querySelector('.deeplink-cmds');
+    if(existing){existing.remove();return;}
+    var p=b.dataset.path;
+    var div=document.createElement('div');
+    div.className='deeplink-cmds';
+    div.style.cssText='font-size:9px;padding:4px 8px;background:var(--ibg);border-radius:3px;margin:2px 0;word-break:break-all';
+    div.innerHTML='<div style="opacity:.5;margin-bottom:2px">iOS Simulator:</div><code>xcrun simctl openurl booted "myapp://'+E(p)+'"</code>'+
+      '<div style="opacity:.5;margin:4px 0 2px">Android:</div><code>adb shell am start -a android.intent.action.VIEW -d "myapp://'+E(p)+'"</code>';
+    b.parentElement.appendChild(div);
   });});
 }
 function renderRouteNodes(nodes,depth){
@@ -44,6 +56,7 @@ function renderRouteNodes(nodes,depth){
       (hasChildren?'<span class="route-arrow arrow open" style="flex-shrink:0;opacity:.4">'+IC.chev+'</span>':'<span style="width:9px;flex-shrink:0"></span>')+
       '<span style="color:'+typeColor+';font-size:9px;font-weight:600;flex-shrink:0">'+E(n.type.replace('Route',''))+'</span>'+
       '<span style="font-weight:600">'+E(n.path)+'</span>'+
+      (n.path&&n.path!=='/'&&n.path!=='[branch]'?'<button class="ib route-deeplink" data-path="'+E(n.path)+'" title="Deep-link test commands" style="padding:0 3px;font-size:8px;margin-left:4px">⧉</button>':'')+
       (n.name?'<span style="opacity:.4;font-size:9px">'+E(n.name)+'</span>':'')+
       (n.widget?'<span class="route-link" data-file="'+E(n.file)+'" data-line="'+n.line+'" style="margin-left:auto;opacity:.5;font-size:9px;cursor:pointer;text-decoration:underline dotted;flex-shrink:0" title="Open '+E(n.widget)+'">'+E(n.widget)+'</span>':'')+
       '</div>';

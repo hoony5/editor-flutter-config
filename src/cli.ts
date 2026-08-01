@@ -10,6 +10,7 @@ import { scanToolEntries } from './tabs/tools/handler';
 import { readManifest } from './shared/execUtils';
 import { readMetrics } from './shared/metrics';
 import { scanCodegenStatus } from './tabs/codegen/handler';
+import { runDoctor, diffBranches } from './tabs/doctor/handler';
 import type { PostFn } from './types';
 
 function collect(): { post: PostFn; data: () => unknown } {
@@ -40,6 +41,8 @@ Commands:
   routes            GoRouter route tree
   checklist         Release readiness checklist
   codegen           Code generation status (annotations, missing files)
+  doctor            Diagnose common project misconfigurations
+  diff [branch]     Compare platform configs between git branches (default: main)
   tools             Available tool scripts
   metrics           Build size & performance history
 
@@ -119,6 +122,17 @@ switch (cmd) {
   }
   case 'codegen': {
     const c = collect(); scanCodegenStatus(root, c.post);
+    out(c.data());
+    break;
+  }
+  case 'doctor': {
+    const c = collect(); runDoctor(root, c.post);
+    out(c.data());
+    break;
+  }
+  case 'diff': {
+    const branch = args[1];
+    const c = collect(); diffBranches(root, c.post, branch);
     out(c.data());
     break;
   }

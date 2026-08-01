@@ -31,12 +31,56 @@ export function scanEnvFiles(root: string): string[] {
   return results.sort();
 }
 
+export function inferEnvType(value: string): { type: string; valid: boolean; hint: string } {
+  const v = value.trim();
+
+  // URL
+  if (/^https?:\/\//i.test(v)) {
+    try { new URL(v); return { type: 'URL', valid: true, hint: '' }; }
+    catch { return { type: 'URL', valid: false, hint: 'Malformed URL' }; }
+  }
+
+  // Boolean
+  if (/^(true|false)$/i.test(v)) return { type: 'boolean', valid: true, hint: '' };
+
+  // Number
+  if (/^-?\d+(\.\d+)?$/.test(v)) return { type: 'number', valid: true, hint: '' };
+
+  // Port number
+  if (/^\d{2,5}$/.test(v) && parseInt(v) <= 65535) return { type: 'port', valid: true, hint: '' };
+
+  // UUID
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)) return { type: 'UUID', valid: true, hint: '' };
+
+  // JWT-like (Supabase keys)
+  if (/^eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(v)) return { type: 'JWT', valid: true, hint: '' };
+
+  // Supabase URL
+  if (/^https:\/\/[a-z]+\.supabase\.co$/i.test(v)) return { type: 'Supabase URL', valid: true, hint: '' };
+
+  // Email
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return { type: 'email', valid: true, hint: '' };
+
+  // Path
+  if (/^[\/~]/.test(v) || /^[A-Z]:\\/.test(v)) return { type: 'path', valid: true, hint: '' };
+
+  // Empty
+  if (!v) return { type: 'empty', valid: false, hint: 'Empty value' };
+
+  // Default: string
+  return { type: 'string', valid: true, hint: '' };
+}
+
 export function sendEnvFile(root: string, post: PostFn, filePath: string): void {
   const resolved = safePath(root, filePath);
   if (!resolved) return;
   const isDotenv = path.basename(resolved).startsWith('.env');
   const data = isDotenv ? readDotenv(resolved) : readJson(resolved);
-  post({ type: 'envData', fileName: filePath, data });
+  const types: Record<string, { type: string; valid: boolean; hint: string }> = {};
+  for (const [key, value] of Object.entries(data)) {
+    types[key] = inferEnvType(String(value));
+  }
+  post({ type: 'envData', fileName: filePath, data, types });
 }
 
 function readDotenv(filePath: string): Record<string, string> {

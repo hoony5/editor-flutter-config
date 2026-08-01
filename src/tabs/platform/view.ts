@@ -100,6 +100,8 @@ function renderPlatform(){
             h+='<div class="pbody">';
             if(item.d)h+='<div class="pdesc">'+E(item.d)+'</div>';
             if(item.w)h+='<div class="pwarn">⚠ '+E(item.w)+'</div>';
+            var meta=typeof PERM_META!=='undefined'?PERM_META[item.id]:null;
+            if(meta&&meta.impact)h+='<div style="font-size:10px;color:#f85149;padding:1px 0">Impact: '+E(meta.impact)+'</div>';
             ['ios','android','macos'].forEach(function(pl){
               var k=item.p?item.p[pl]:null;
               var platSubs=(item.subs||[]).filter(function(s){return !!s[pl];});

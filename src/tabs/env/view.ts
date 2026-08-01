@@ -74,9 +74,12 @@ function renderCfg(){
     entries.map(function(kv){
       var k=kv[0],sv=String(kv[1]);
       var sec=/key|token|secret|pass/i.test(k);
+      var typeInfo=envTypes&&envTypes[k]?envTypes[k]:null;
       var h='<div class="env-var" style="border:1px solid var(--ib);border-radius:4px;margin-bottom:4px;overflow:hidden">';
       h+='<div class="env-var-hdr" style="display:flex;align-items:center;gap:4px;padding:5px 8px;background:var(--ibg);cursor:pointer;font-size:11px;font-weight:600;user-select:none">'+
-        '<span class="arrow open" style="opacity:.4;transition:transform .15s">'+IC.chev+'</span>'+E(k)+'</div>';
+        '<span class="arrow open" style="opacity:.4;transition:transform .15s">'+IC.chev+'</span>'+E(k)+
+        (typeInfo?'<span class="bg b" style="font-size:8px;margin-left:4px">'+E(typeInfo.type)+'</span>':'')+'</div>';
+      if(typeInfo&&!typeInfo.valid)h+='<div style="font-size:9px;color:#f85149;padding:1px 0 1px 20px">⚠ '+E(typeInfo.hint)+'</div>';
       h+='<div class="env-var-body" style="padding:6px 8px">';
       if(sv==='true'||sv==='false'){
         h+='<label class="sw"><input type="checkbox" data-k="'+E(k)+'" data-orig="'+E(sv)+'"'+(sv==='true'?' checked':'')+'><span class="sl"></span></label>';

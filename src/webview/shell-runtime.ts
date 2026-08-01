@@ -1,6 +1,6 @@
 export const shellRuntimeJs = `
 var V=acquireVsCodeApi();
-var D=null,envFile='',envData=null,statusData=null,platData=null,permState={ios:[],android:[],macos:[]},pubDeps=[],permUsage=[],platTab='ios',expTool=null,manageData=null,pubspecData=null,storageData=null;
+var D=null,envFile='',envData=null,envTypes=null,statusData=null,platData=null,permState={ios:[],android:[],macos:[]},pubDeps=[],permUsage=[],platTab='ios',expTool=null,manageData=null,pubspecData=null,storageData=null;
 var _platEdits={},_platSearch='',_platCat='Permissions',_platSub='ios',_platAdds=[],_platRemoves=new Set();
 var _permEdits=[],_expCats=new Set(),_expPerms=new Set();
 var _origDeps=[],_stagedAdds=[],_depPage=0,_depSearch='',_DEP_PER=20;
@@ -35,7 +35,7 @@ window.addEventListener('message',function(e){
   var m=e.data;
   try{if(m.type==='data'){D=m;pubspecData=m.pubspec||null;render();}}catch(err){console.error('data:',err);}
   try{if(m.type==='toolsData'){if(D)D.scannedTools=m.scannedTools;renderTools();}}catch(err){console.error('tools:',err);}
-  try{if(m.type==='envData'){envData=m.data;renderCfg();}}catch(err){console.error('envData:',err);}
+  try{if(m.type==='envData'){envData=m.data;envTypes=m.types||null;renderCfg();}}catch(err){console.error('envData:',err);}
   try{if(m.type==='status'){statusData=m;renderStatus();}}catch(err){console.error('status:',err);}
   try{if(m.type==='platformConfig'){platData=m.platforms;permState=m.permState||{ios:[],android:[],macos:[]};pubDeps=m.pubDeps||[];permUsage=m.permUsage||[];renderPlatform();}}catch(err){console.error('platform:',err);}
   try{if(m.type==='manageInfo'){manageData=m;renderManage(m);}}catch(err){console.error('manage:',err);}
