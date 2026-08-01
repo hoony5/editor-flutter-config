@@ -153,3 +153,7 @@ vsce publish minor      # 0.2.0 → 0.3.0
 ## License
 
 [Apache-2.0](LICENSE) — Copyright 2024–2026 Hoony (삶은계란) · https://block.salmeun.com
+
+---
+
+> *This project was developed with AI assistance (Qwen Code, Claude Code, OpenAI Codex).*
