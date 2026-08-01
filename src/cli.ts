@@ -9,6 +9,7 @@ import { getChecklist } from './tabs/manage/handler';
 import { scanToolEntries } from './tabs/tools/handler';
 import { readManifest } from './shared/execUtils';
 import { readMetrics } from './shared/metrics';
+import { scanCodegenStatus } from './tabs/codegen/handler';
 import type { PostFn } from './types';
 
 function collect(): { post: PostFn; data: () => unknown } {
@@ -38,6 +39,7 @@ Commands:
   assets            Asset declarations
   routes            GoRouter route tree
   checklist         Release readiness checklist
+  codegen           Code generation status (annotations, missing files)
   tools             Available tool scripts
   metrics           Build size & performance history
 
@@ -113,6 +115,11 @@ switch (cmd) {
   }
   case 'metrics': {
     out(readMetrics(root));
+    break;
+  }
+  case 'codegen': {
+    const c = collect(); scanCodegenStatus(root, c.post);
+    out(c.data());
     break;
   }
   default:

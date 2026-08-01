@@ -1,152 +1,95 @@
 # Flutter Project Settings
 
-> Manage your Flutter project's **permissions, environment, assets, routing, dependencies, and code generation** — all from the VSCode sidebar. No more switching between Xcode, Android Studio, and text editors.
+Let's be honest — managing Flutter platform configs is annoying. You're jumping between Xcode for iOS permissions, Android Studio for manifest entries, editing `Info.plist` by hand, wondering if you forgot to add that Bluetooth permission on Android...
+
+This extension puts all of that in one sidebar panel. Toggle permissions, edit env files, preview assets, check your routes, manage code generation — without leaving VSCode.
+
+It works with **any Flutter project**. No special setup, no template lock-in. If you've got a `pubspec.yaml`, you're good.
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-106%20passing-brightgreen.svg)](test/)
 [![VSCode](https://img.shields.io/badge/VSCode-1.96%2B-007ACC.svg)](https://code.visualstudio.com)
 
-<!-- Replace with actual screenshot -->
-<!-- ![Screenshot](resources/screenshot.png) -->
+<!-- TODO: Add screenshots -->
+<!-- ![Permissions Tab](resources/screenshot-permissions.png) -->
 
 ---
 
-## Features
+## What you get
 
-### 🔐 Platform Permissions
-- **40+ permissions** organized by category (Camera, Location, Bluetooth, Notifications, etc.)
-- Per-platform toggles (iOS / Android / macOS) with SDK version badges
-- Official documentation links (Apple / Android / Firebase) for each permission
-- **Reverse analysis**: scans your `lib/` code and warns when you use an API (e.g., `Geolocator`) but haven't configured the corresponding permission
-- Dangerous settings warnings (ATS, cleartext traffic) with instant tooltips
-- Staged editing with confirmation dialog and XML validation + auto-rollback
+### Permissions, finally manageable
+40+ permissions organized by category — Camera, Location, Bluetooth, Notifications, you name it. Each one shows which platforms it applies to, what SDK version you need, and links straight to the official docs.
 
-### 🌍 Environment Management
-- Auto-discovers all env/config files across your project (JSON + dotenv)
-- Inline key-value editing with folder-style variable display
-- **Env Diff**: compare two env files side-by-side with missing/mismatch highlighting
-- One-click Compose & Run with `--dart-define-from-file`
+The cool part? It **scans your code** and warns you when you're using something like `Geolocator` but forgot to configure the location permission. No more runtime crashes because you missed a plist entry.
 
-### 🛠 Tools
-- Auto-scans `tool/` directory for scripts (25+ runtimes: Dart, Python, Shell, Node, Go, etc.)
-- Accordion groups with inline README preview
-- ▶ Run / ⟳ Repeat with configurable interval (sec/min)
+Dangerous settings (looking at you, `NSAllowsArbitraryLoads`) get flagged with a warning tooltip so you don't accidentally ship something that'll get rejected.
 
-### 📦 Pubspec Manager
-- **Dependencies**: search, paginate, dev/release separation, direct `pub.dev` links
-- **Assets**: folder tree with thumbnails, font/audio/video preview, syntax-highlighted text preview (JSON, CSV, XML, Markdown)
-- Asset optimization suggestions (WebP conversion, resize, H.264)
-- Parse error banner for invalid `pubspec.yaml`
+### Env files without the headache
+Auto-discovers all your env and config files (JSON and dotenv). Edit them inline, compare two files side-by-side to spot missing keys, and run with `--dart-define-from-file` in one click.
 
-### ⚙️ Codegen Hub
-- `build_runner` management: build / watch / clean from the sidebar
-- Annotation scanner: `@freezed`, `@riverpod`, `@RestApi`, `@JsonSerializable`, `@injectable`
-- **Missing generation detection**: warns when annotated classes lack generated files
-- `build.yaml` accordion editor
+### Assets you can actually see
+Folder tree with thumbnails. Preview fonts with sample text, play audio, watch video. JSON, CSV, XML, Markdown files get syntax-highlighted previews. It'll even suggest converting that 2MB PNG to WebP.
 
-### 🗺 Router
-- Parses GoRouter configuration including `StatefulShellRoute`, `StatefulShellBranch`, and nested routes
-- Resolves route constants (e.g., `AppRoutes.home` → `/home`)
-- Click any widget name to jump to its source line
+### Codegen Hub
+Run `build_runner` from the sidebar. See all your `@freezed`, `@riverpod`, `@RestApi` annotations at a glance. Get warned when you've annotated a class but forgot to run the generator.
 
-### 📊 Status & Manage
-- SDK versions, FVM pin, devices/simulators, Git status, disk usage
-- Build cache cleanup, test runner, release checklist
-- Process scanner with kill
+### Router visualization
+Parses your GoRouter config — including `StatefulShellRoute` and nested routes — and shows it as a tree. Click any widget name to jump straight to the source.
 
-### 🔍 Lint
-- Toggle `analysis_options.yaml` rules on/off
+### Everything else
+Dependencies with `pub.dev` links, lint rule toggles, SDK versions, device list, build cache cleanup, release checklist, process manager. It's a lot, but it's all organized in tabs so you only see what you need.
 
 ---
 
-## CLI for AI Agents
+## CLI (for AI agents & terminal lovers)
 
-Every feature is also available as a CLI that outputs JSON — designed for AI coding agents to load project context in one command:
+Every feature is also a CLI command that outputs JSON. One command gives your AI coding agent the full project context:
 
 ```bash
-bin/fat snapshot          # Full project snapshot (permissions + deps + assets + routes + env)
-bin/fat platform          # Platform config & permissions
-bin/fat deps              # Dependencies & SDK constraints
-bin/fat routes            # GoRouter route tree
-bin/fat checklist         # Release readiness checklist
-bin/fat env               # Env file listing
-bin/fat env-diff a.json b.json  # Key-by-key diff
-bin/fat tools             # Available tool scripts
-bin/fat metrics           # Build size & performance history
+bin/fat snapshot    # permissions + deps + assets + routes + env + codegen — everything
+bin/fat platform    # just platform config
+bin/fat deps        # dependencies
+bin/fat routes      # route tree
+bin/fat codegen     # annotation scan + missing generated files
+bin/fat env-diff develop.json release.json   # spot the missing keys
 ```
 
 ---
 
-## Installation
+## Install
 
-### From VSCode Marketplace
-Search **"Flutter Project Settings"** in the Extensions sidebar, or:
+**Marketplace** — search "Flutter Project Settings" in Extensions, or:
 ```bash
 code --install-extension hoony5.editor-flutter-config
 ```
 
-### From VSIX
-Download from [GitHub Releases](https://github.com/hoony5/editor-flutter-config/releases) →
-VSCode → Extensions → `···` → **Install from VSIX**
+**VSIX** — grab it from [GitHub Releases](https://github.com/hoony5/editor-flutter-config/releases) → Extensions → `···` → Install from VSIX
 
-### From Source
+**From source**:
 ```bash
 git clone https://github.com/hoony5/editor-flutter-config.git
-cd editor-flutter-config
-npm install && npm run compile
-# Press F5 in VSCode to launch Extension Development Host
+cd editor-flutter-config && npm install && npm run compile
+# F5 in VSCode
 ```
 
 ---
 
-## Requirements
+## Good to know
 
-- Any Flutter project with a `pubspec.yaml`
-- Auto-detects `tool/bin/flutterw` / `tool/bin/dartw` wrappers; falls back to standard `flutter` / `dart` commands
-- No project-specific configuration needed
-
----
-
-## Screenshots
-
-<!-- TODO: Add actual screenshots -->
-<!-- Place screenshots in resources/ and reference them here -->
-<!-- Recommended screenshots:
-  1. resources/screenshot-permissions.png — Permissions tab with folder UI
-  2. resources/screenshot-env.png — Env tab with diff view
-  3. resources/screenshot-pubspec.png — Pubspec assets with preview
-  4. resources/screenshot-codegen.png — Codegen Hub
-  5. resources/screenshot-router.png — Router tree
--->
+- Auto-detects `flutterw`/`dartw` wrappers in your project; falls back to `flutter`/`dart` if they're not there
+- Saves create a `.bak` backup and validate XML before committing — bad edits roll back automatically
+- Secrets (keys, tokens, passwords) are blocked from being written to git-tracked files
+- CSP with nonce, input sanitization, path traversal protection — the boring security stuff that matters
 
 ---
 
 ## Development
 
 ```bash
-npm run compile     # TypeScript + webview bundle
-npm test            # 106 tests (vitest)
-vsce package        # Build .vsix
+npm run compile     # build
+npm test            # 106 tests
+vsce publish patch  # ship it
 ```
-
-## Publishing
-
-```bash
-vsce login hoony5       # Azure DevOps PAT (first time only)
-vsce publish patch      # 0.2.0 → 0.2.1
-vsce publish minor      # 0.2.0 → 0.3.0
-```
-
----
-
-## Security
-
-- CSP with nonce (no `unsafe-inline` scripts)
-- Command injection prevention (`sanitizeShellArg`)
-- Path traversal protection (`safePath`)
-- Regex/YAML injection prevention (`escapeRegex`, `sanitizeYaml`)
-- Secret guard: blocks writing secrets to git-tracked files (fail-closed)
-- XML validation with auto-rollback on save failure
 
 ---
 
@@ -156,4 +99,4 @@ vsce publish minor      # 0.2.0 → 0.3.0
 
 ---
 
-> *This project was developed with AI assistance (Qwen Code, Claude Code, OpenAI Codex).*
+> *Built with AI assistance (Qwen Code, Claude Code, OpenAI Codex) — because configuring permissions by hand is nobody's idea of a good time.*
