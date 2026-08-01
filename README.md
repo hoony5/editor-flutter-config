@@ -93,6 +93,60 @@ vsce publish patch  # ship it
 
 ---
 
+## Troubleshooting
+
+**Extension shows "Loading..." forever**
+- Open `Help → Toggle Developer Tools → Console` and check for errors
+- Make sure your project has a `pubspec.yaml` at the root
+- If you're on a network mount or external disk, make sure it's connected
+
+**Permissions tab shows empty or wrong data**
+- The extension reads `ios/Runner/Info.plist`, `android/app/src/main/AndroidManifest.xml`, and `macos/Runner/*.entitlements`
+- If these files don't exist yet (new project), the tab will show "(file not found)" — that's normal
+- After editing permissions in Xcode/Android Studio, the extension auto-refreshes (file watcher with 800ms debounce)
+
+**"Gradle build failed: Unsupported class file major version"**
+- This is a Java version mismatch, not an extension issue
+- Check `java -version` — Gradle 9.x supports up to Java 24
+- Fix: set `JAVA_HOME` to a compatible JDK in your shell profile
+
+**Router tab says "GoRouter declaration not found"**
+- The scanner looks for `GoRouter(`, `GoRoute(`, or `StatefulShellRoute` in `.dart` files under `lib/`
+- Your router file must contain at least one of these patterns
+- Route constants like `AppRoutes.home` are resolved from `*routes*.dart` files — make sure your route constants file exists and uses `static const` declarations
+- See the example code in the Router tab for the expected format
+
+**Save permission changes but nothing happens**
+- A confirmation dialog shows your changes before applying — click "Apply"
+- If XML validation fails after saving, the extension automatically rolls back from the `.bak` backup
+- Check the `.bak` file next to your plist/manifest if something went wrong
+
+**CLI (`fat`) returns empty JSON**
+- Run from your project root: `cd /path/to/flutter/project && bin/fat snapshot`
+- Or specify the root: `bin/fat snapshot --root /path/to/flutter/project`
+- The CLI auto-detects `flutterw`/`dartw` wrappers; falls back to `flutter`/`dart`
+
+**Env files not showing**
+- Scans for `*.json` files in paths containing `config` or `env`, plus `.env*` dotenv files
+- `node_modules`, `build`, `.dart_tool`, `.git` directories are skipped
+- Both JSON (`{"KEY": "value"}`) and dotenv (`KEY=value`) formats are supported
+
+---
+
+## What happens when you save
+
+When you toggle a permission and hit save:
+
+1. **Confirmation** — a modal shows exactly what will change (`+ NSCameraUsageDescription (Info.plist)`)
+2. **Backup** — a `.bak` copy is created before any file is modified
+3. **Validation** — the modified XML is checked for structural integrity
+4. **Rollback** — if validation fails, the `.bak` is restored automatically
+5. **Secret guard** — if the key or value looks like a secret (password, token, api_key) and the file is git-tracked, the write is **blocked**
+
+Existing keys are **updated in place** — no duplicates. New keys are inserted before the closing `</dict>` (plist) or before `<application>` (manifest).
+
+---
+
 ## License
 
 [Apache-2.0](LICENSE) — Copyright 2024–2026 Hoony (삶은계란) · https://block.salmeun.com

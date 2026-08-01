@@ -4,7 +4,17 @@ function renderRoutes(m){
   _routesData=m.routes||[];_routesFile=m.file||'';
   var el=document.getElementById('router-content');if(!el)return;
   if(!_routesData.length){
-    el.innerHTML='<div style="opacity:.5;padding:8px;font-size:11px">GoRouter declaration not found in lib/.<br>Make sure your router file contains <code>GoRouter(</code>.</div>';
+    el.innerHTML='<div style="padding:8px;font-size:11px;line-height:1.6">'+
+      '<div style="opacity:.5;margin-bottom:8px">GoRouter declaration not found in <code>lib/</code>.</div>'+
+      '<div style="font-weight:600;margin-bottom:4px">Detection criteria:</div>'+
+      '<div style="opacity:.7;font-size:10px;margin-bottom:8px">Scans all <code>.dart</code> files in <code>lib/</code> for <code>GoRouter(</code>, <code>GoRoute(</code>, or <code>StatefulShellRoute</code>. '+
+      'Files with the most <code>GoRoute(</code> occurrences win. Route constants (e.g. <code>AppRoutes.home</code>) are resolved from <code>*routes*.dart</code> files.</div>'+
+      '<div style="font-weight:600;margin-bottom:4px">Example — this will be detected:</div>'+
+      '<pre style="font-size:10px;background:var(--ibg);padding:8px;border-radius:4px;overflow-x:auto;line-height:1.5">'+
+      E("final router = GoRouter(\n  routes: <RouteBase>[\n    GoRoute(\n      path: '/home',\n      builder: (context, state) => const HomePage(),\n      routes: [\n        GoRoute(\n          path: 'detail/:id',\n          builder: (context, state) => DetailPage(\n            id: state.pathParameters['id']!,\n          ),\n        ),\n      ],\n    ),\n    StatefulShellRoute.indexedStack(\n      builder: (context, state, nav) => MainShell(nav),\n      branches: [\n        StatefulShellBranch(\n          routes: [GoRoute(path: '/tab1', builder: ...)],\n        ),\n      ],\n    ),\n  ],\n);")+
+      '</pre>'+
+      '<div style="opacity:.5;font-size:10px;margin-top:6px">Tip: file name containing <code>router</code> or <code>route</code> gets priority in fallback search.</div>'+
+      '</div>';
     return;
   }
   var h='<div style="font-size:10px;opacity:.4;padding:2px 0;margin-bottom:4px"><span class="file-link" data-open="'+E(_routesFile)+'" style="cursor:pointer;text-decoration:underline dotted">'+E(_routesFile)+'</span></div>';
