@@ -101,7 +101,6 @@ const MIME: Record<string, string> = {
 };
 
 export function getAssetPreviewData(root: string, post: PostFn, filePath: string): void {
-  const { safePath } = require('../../shared/security');
   const full = safePath(root, filePath);
   if (!full || !fs.existsSync(full)) { post({ type: 'assetPreview', filePath, data: null, previewType: 'none' }); return; }
   const ext = path.extname(full).toLowerCase();
@@ -314,7 +313,8 @@ export function analyzeAssetOptimization(root: string, post: PostFn): void {
       if (entry.isDirectory()) { walk(full); continue; }
       if (!entry.isFile()) continue;
       const ext = path.extname(entry.name).toLowerCase();
-      const size = fs.statSync(full).size;
+      let size: number;
+      try { size = fs.statSync(full).size; } catch { continue; }
       const rel = path.relative(root, full);
 
       if (['.png', '.jpg', '.jpeg', '.bmp'].includes(ext) && size > 1024 * 1024) {
@@ -358,11 +358,12 @@ export function analyzeAssetOptimization(root: string, post: PostFn): void {
 }
 
 export function assetOptimize(root: string, cmd: string, file: string): void {
-  const safe = file.replace(/[^a-zA-Z0-9_./-]/g, '');
+  const safe = file.replace(/[;|&$`()[\]{}<>!#~]/g, '');
+  const out = safe.replace(/\.\w+$/, '');
   const cmds: Record<string, string> = {
-    webp: `cwebp -q 80 "${safe}" -o "${safe.replace(/\.\w+$/, '.webp')}" && echo "Done: ${safe.replace(/\.\w+$/, '.webp')}"`,
+    webp: `cwebp -q 80 "${safe}" -o "${out}.webp" && echo "Done: ${out}.webp"`,
     resize: `sips -Z 50% "${safe}" && echo "Resized: ${safe}"`,
-    h264: `ffmpeg -i "${safe}" -c:v libx264 -crf 23 -c:a aac "${safe.replace(/\.\w+$/, '_h264.mp4')}" && echo "Done: ${safe.replace(/\.\w+$/, '_h264.mp4')}"`,
+    h264: `ffmpeg -i "${safe}" -c:v libx264 -crf 23 -c:a aac "${out}_h264.mp4" && echo "Done: ${out}_h264.mp4"`,
   };
   const command = cmds[cmd];
   if (!command) return;

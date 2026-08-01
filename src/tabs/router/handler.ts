@@ -90,9 +90,6 @@ function parseRouteTree(lines: string[], file: string): RouteNode[] {
   const pathRe = /path\s*:\s*['"]([^'"]+)['"]/;
   const nameRe = /name\s*:\s*['"]([^'"]+)['"]/;
   const builderRe = /(?:builder|pageBuilder)\s*:\s*\(.*?\)\s*(?:=>|{)\s*(?:const\s+)?(\w+)/;
-  const parentRe = /parentNavigatorKey\s*:/;
-
-  let i = 0;
   const parseBlock = (startIdx: number, depth: number): { node: RouteNode; endIdx: number } | null => {
     for (let j = startIdx; j < lines.length; j++) {
       const line = lines[j];

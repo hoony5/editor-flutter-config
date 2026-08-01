@@ -13,13 +13,6 @@ interface AnnotationHit {
   className: string;
 }
 
-interface CodegenStatus {
-  annotations: Record<string, AnnotationHit[]>;
-  generatedFiles: { pattern: string; count: number }[];
-  missing: { file: string; expected: string }[];
-  buildYaml: Record<string, unknown> | null;
-  lastBuild: string | null;
-}
 
 const ANNOTATION_PATTERNS: { key: string; regex: RegExp; genExt: string }[] = [
   { key: '@freezed', regex: /@freezed|@Freezed\(/, genExt: '.freezed.dart' },
@@ -106,7 +99,7 @@ export function scanCodegenStatus(root: string, post: PostFn): void {
   post({ type: 'codegenStatus', annotations, generatedFiles, missing, buildYaml, lastBuild });
 }
 
-export function runBuildRunner(root: string, mode: string, post: PostFn): void {
+export function runBuildRunner(root: string, mode: string, _post: PostFn): void {
   const cmds: Record<string, string> = {
     build: './tool/bin/dartw run build_runner build --delete-conflicting-outputs',
     watch: './tool/bin/dartw run build_runner watch --delete-conflicting-outputs',

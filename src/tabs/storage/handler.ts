@@ -202,7 +202,7 @@ function resolveDesktopPaths(platform: HostPlatform, bundleId: string, appId: st
   }
 }
 
-export async function testDownload(root: string, post: PostFn, targetPath: string): Promise<void> {
+export async function testDownload(_root: string, post: PostFn, targetPath: string): Promise<void> {
   const testContent = `flutter-config-test-${Date.now()}`;
   const testFile = path.join(targetPath, `_download_test_${Date.now()}.tmp`);
   const t0 = Date.now();
@@ -239,7 +239,7 @@ export async function testDownloadAdb(post: PostFn, pkg: string, remotePath: str
   }
 }
 
-export async function openStoragePath(post: PostFn, targetPath: string): Promise<void> {
+export async function openStoragePath(_post: PostFn, targetPath: string): Promise<void> {
   const platform = process.platform;
   const safe = sanitizeShellArg(targetPath);
   const cmd = platform === 'darwin' ? `open "${safe}"`

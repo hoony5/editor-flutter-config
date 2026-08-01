@@ -177,7 +177,7 @@ export function recordBuildSize(root: string, post: PostFn, platform: string, si
 
 // ── Performance Baseline ──
 
-export async function runProfile(root: string, post: PostFn): Promise<void> {
+export async function runProfile(root: string, _post: PostFn): Promise<void> {
   const terminal = vscode.window.createTerminal({ name: 'Flutter Profile', cwd: root });
   trackTerminal(terminal);
   terminal.show();

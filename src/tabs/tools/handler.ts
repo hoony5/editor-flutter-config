@@ -6,7 +6,6 @@ import { readManifest } from '../../shared/execUtils';
 import { readText } from '../../shared/fileUtils';
 import { sanitizeShellArg } from '../../shared/security';
 import { trackTerminal } from '../../shared/terminals';
-import type { PostFn } from '../../types';
 
 const RUNTIMES: Record<string, { lang: string; cmd: string }> = {
   '.py': { lang: 'Python', cmd: 'python3' }, '.js': { lang: 'JavaScript', cmd: 'node' },
@@ -69,25 +68,26 @@ export function scanToolEntries(root: string): ScannedTool[] {
 }
 
 export function getToolCommand(file: string, runtime: string): string {
-  const safeFile = file.replace(/[^a-zA-Z0-9_./-]/g, '');
+  const safeFile = file.replace(/[;|&$`()[\]{}<>!#~]/g, '');
+  const q = `tool/${safeFile}`;
   const ext = path.extname(safeFile);
   const cmds: Record<string, string> = {
-    '.sh': `bash tool/${safeFile}`, '.bash': `bash tool/${safeFile}`, '.zsh': `zsh tool/${safeFile}`,
-    '.dart': `./tool/bin/dartw run tool/${safeFile}`,
-    '.py': `python3 tool/${safeFile}`, '.js': `node tool/${safeFile}`, '.mjs': `node tool/${safeFile}`,
-    '.ts': `npx tsx tool/${safeFile}`, '.tsx': `npx tsx tool/${safeFile}`,
-    '.go': `go run tool/${safeFile}`, '.rb': `ruby tool/${safeFile}`,
-    '.php': `php tool/${safeFile}`, '.lua': `lua tool/${safeFile}`,
-    '.pl': `perl tool/${safeFile}`, '.ps1': `pwsh tool/${safeFile}`,
-    '.rs': `rustc tool/${safeFile} -o /tmp/_rs_tool_${Date.now()} && /tmp/_rs_tool_${Date.now()}`,
-    '.c': `cc tool/${safeFile} -o /tmp/_c_tool_${Date.now()} && /tmp/_c_tool_${Date.now()}`,
-    '.cpp': `c++ tool/${safeFile} -o /tmp/_cpp_tool_${Date.now()} && /tmp/_cpp_tool_${Date.now()}`,
-    '.cc': `c++ tool/${safeFile} -o /tmp/_cc_tool_${Date.now()} && /tmp/_cc_tool_${Date.now()}`,
-    '.java': `java tool/${safeFile}`, '.swift': `swift tool/${safeFile}`,
-    '.kt': `kotlin tool/${safeFile}`, '.r': `Rscript tool/${safeFile}`, '.R': `Rscript tool/${safeFile}`,
-    '.zig': `zig run tool/${safeFile}`, '.cs': `dotnet-script tool/${safeFile}`,
+    '.sh': `bash "${q}"`, '.bash': `bash "${q}"`, '.zsh': `zsh "${q}"`,
+    '.dart': `./tool/bin/dartw run "${q}"`,
+    '.py': `python3 "${q}"`, '.js': `node "${q}"`, '.mjs': `node "${q}"`,
+    '.ts': `npx tsx "${q}"`, '.tsx': `npx tsx "${q}"`,
+    '.go': `go run "${q}"`, '.rb': `ruby "${q}"`,
+    '.php': `php "${q}"`, '.lua': `lua "${q}"`,
+    '.pl': `perl "${q}"`, '.ps1': `pwsh "${q}"`,
+    '.rs': `rustc "${q}" -o /tmp/_rs_tool_${Date.now()} && /tmp/_rs_tool_${Date.now()}`,
+    '.c': `cc "${q}" -o /tmp/_c_tool_${Date.now()} && /tmp/_c_tool_${Date.now()}`,
+    '.cpp': `c++ "${q}" -o /tmp/_cpp_tool_${Date.now()} && /tmp/_cpp_tool_${Date.now()}`,
+    '.cc': `c++ "${q}" -o /tmp/_cc_tool_${Date.now()} && /tmp/_cc_tool_${Date.now()}`,
+    '.java': `java "${q}"`, '.swift': `swift "${q}"`,
+    '.kt': `kotlin "${q}"`, '.r': `Rscript "${q}"`, '.R': `Rscript "${q}"`,
+    '.zig': `zig run "${q}"`, '.cs': `dotnet-script "${q}"`,
   };
-  return cmds[ext] ?? `${runtime.replace(/[^a-zA-Z0-9_-]/g, '')} tool/${safeFile}`;
+  return cmds[ext] ?? `${runtime.replace(/[^a-zA-Z0-9_-]/g, '')} "${q}"`;
 }
 
 export function runScannedTool(root: string, file: string, runtime: string): void {

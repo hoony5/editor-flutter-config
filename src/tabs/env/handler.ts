@@ -57,7 +57,7 @@ function readDotenv(filePath: string): Record<string, string> {
   return result;
 }
 
-export function createEnvFile(root: string, post: PostFn, filePath: string): void {
+export function createEnvFile(root: string, _post: PostFn, filePath: string): void {
   const fullPath = safePath(root, filePath);
   if (!fullPath) { vscode.window.showWarningMessage('Invalid path.'); return; }
   if (fs.existsSync(fullPath)) {
