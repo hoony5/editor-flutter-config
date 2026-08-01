@@ -2,7 +2,7 @@
   "name": "editor-flutter-config",
   "displayName": "Flutter Project Settings",
   "description": "Flutter project settings, permissions, assets, routing & tool launcher — sidebar UI + CLI for agents",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "publisher": "hoony5",
   "license": "Apache-2.0",
   "repository": {
