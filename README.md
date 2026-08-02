@@ -1,10 +1,14 @@
 # Flutter Project Settings
 
-**One sidebar. Every platform setting.** Inspired by Unity's Project Settings window — where Player Settings, Quality, Input, and Physics all live in one place — this extension does the same for Flutter. No more jumping between Xcode, Android Studio, and hand-editing `Info.plist`.
+Flutter 플랫폼 설정(권한·env·에셋·라우팅·codegen)을 사이드바 하나로. Unity Project Settings에서 영감.
+토글하면 `Info.plist`·`AndroidManifest.xml`·`.entitlements`에 자동 기록. 어떤 Flutter 프로젝트든 동작.
+AI 에이전트가 JSON으로 프로젝트 컨텍스트를 로드할 수 있는 CLI(`bin/fat`) 포함.
 
-Permissions, environment files, assets, routing, dependencies, code generation — all managed from a single centralized panel in your editor. Change a permission toggle, and the extension writes the correct entry to `Info.plist`, `AndroidManifest.xml`, or `.entitlements` for you.
+**사용법·CLI 커맨드·트러블슈팅**: 이 문서 아래 섹션 참조.
 
-Works with **any Flutter project**. No template lock-in. If you've got a `pubspec.yaml`, you're good.
+> Built with AI assistance (Qwen Code, Claude Code, OpenAI Codex).
+
+**이런 상황에 유용**: Xcode/Android Studio 오가며 권한 설정할 때, env 파일 간 누락 키 찾을 때, codegen 돌렸는지 까먹었을 때, AI 에이전트에게 프로젝트 구조를 한 번에 알려줄 때.
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-106%20passing-brightgreen.svg)](test/)
@@ -168,7 +172,3 @@ Every CLI command outputs JSON. Every feature in the sidebar has a CLI equivalen
 ## License
 
 [Apache-2.0](LICENSE) — Copyright 2024–2026 Hoony (삶은계란) · https://block.salmeun.com
-
----
-
-> *Built with AI assistance (Qwen Code, Claude Code, OpenAI Codex) — because configuring permissions by hand is nobody's idea of a good time.*
