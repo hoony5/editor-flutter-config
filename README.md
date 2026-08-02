@@ -14,8 +14,15 @@ AI 에이전트가 JSON으로 프로젝트 컨텍스트를 로드할 수 있는 
 [![Tests](https://img.shields.io/badge/tests-106%20passing-brightgreen.svg)](test/)
 [![VSCode](https://img.shields.io/badge/VSCode-1.96%2B-007ACC.svg)](https://code.visualstudio.com)
 
-<!-- TODO: Add screenshots -->
-<!-- ![Permissions Tab](resources/screenshot-permissions.png) -->
+## Screenshots
+
+| Permissions | Env | Assets |
+|---|---|---|
+| ![Permissions](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-1.png) | ![Env](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-2.png) | ![Assets](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-3.png) |
+
+| Codegen | Router | Manage |
+|---|---|---|
+| ![Codegen](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-4.png) | ![Router](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-5.png) | ![Manage](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-6.png) |
 
 ---
 

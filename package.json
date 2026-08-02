@@ -31,13 +31,14 @@
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
+  "icon": "resources/icon.png",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
           "id": "flutterAppConfig",
           "title": "Flutter Project Settings",
-          "icon": "resources/gear.svg"
+          "icon": "resources/flutter-settings.svg"
         }
       ]
     },
