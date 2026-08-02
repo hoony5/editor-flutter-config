@@ -2,7 +2,7 @@
   "name": "editor-flutter-config",
   "displayName": "Flutter Project Settings",
   "description": "Centralized Flutter project settings — permissions, env, assets, routing, codegen in one sidebar. Inspired by Unity Project Settings.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "hoony5",
   "license": "Apache-2.0",
   "repository": {
