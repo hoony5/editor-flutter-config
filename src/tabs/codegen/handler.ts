@@ -2,10 +2,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'yaml';
 import * as vscode from 'vscode';
+import { spawn } from 'child_process';
 import { readText } from '../../shared/fileUtils';
 import { getDartCmd } from '../../shared/execUtils';
 import { trackTerminal } from '../../shared/terminals';
 import type { PostFn } from '../../types';
+
+let buildProcess: import('child_process').ChildProcess | null = null;
 
 interface AnnotationHit {
   file: string;
@@ -134,4 +137,56 @@ export function saveBuildYaml(root: string, post: PostFn, content: string): void
   fs.writeFileSync(filePath, content);
   post({ type: 'buildYamlSaved' });
   scanCodegenStatus(root, post);
+}
+
+export function runBuildRunnerStream(root: string, post: PostFn, mode: string): void {
+  if (buildProcess) {
+    post({ type: 'buildLog', line: '[flutter-config] A build_runner process is already running. Stop it first.', stream: 'stderr' });
+    return;
+  }
+  const dartCmd = getDartCmd(root);
+  const args = ['run', 'build_runner', mode, '--delete-conflicting-outputs'];
+  const child = spawn(dartCmd, args, { cwd: root, shell: true });
+  buildProcess = child;
+
+  let stdoutBuf = '';
+  let stderrBuf = '';
+
+  child.stdout?.on('data', (chunk: Buffer) => {
+    stdoutBuf += chunk.toString();
+    const lines = stdoutBuf.split('\n');
+    stdoutBuf = lines.pop() ?? '';
+    for (const line of lines) {
+      post({ type: 'buildLog', line, stream: 'stdout' });
+    }
+  });
+
+  child.stderr?.on('data', (chunk: Buffer) => {
+    stderrBuf += chunk.toString();
+    const lines = stderrBuf.split('\n');
+    stderrBuf = lines.pop() ?? '';
+    for (const line of lines) {
+      post({ type: 'buildLog', line, stream: 'stderr' });
+    }
+  });
+
+  child.on('close', (exitCode) => {
+    if (stdoutBuf) { post({ type: 'buildLog', line: stdoutBuf, stream: 'stdout' }); }
+    if (stderrBuf) { post({ type: 'buildLog', line: stderrBuf, stream: 'stderr' }); }
+    buildProcess = null;
+    post({ type: 'buildLogEnd', exitCode: exitCode ?? -1 });
+  });
+
+  child.on('error', (err) => {
+    buildProcess = null;
+    post({ type: 'buildLog', line: `[flutter-config] Failed to start: ${err.message}`, stream: 'stderr' });
+    post({ type: 'buildLogEnd', exitCode: -1 });
+  });
+}
+
+export function stopBuildRunner(): void {
+  if (buildProcess) {
+    buildProcess.kill('SIGTERM');
+    buildProcess = null;
+  }
 }

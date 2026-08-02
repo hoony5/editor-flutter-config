@@ -52,10 +52,14 @@ window.addEventListener('message',function(e){
   try{if(m.type==='envDiff'){renderEnvDiff(m);}}catch(err){console.error('envDiff:',err);}
   try{if(m.type==='assetOptimization'){renderAssetOpt(m);}}catch(err){console.error('assetOpt:',err);}
   try{if(m.type==='assetPreview'){renderAssetPreview(m);}}catch(err){console.error('assetPreview:',err);}
+  try{if(m.type==='assetUsage'){renderAssetUsage(m);}}catch(err){console.error('assetUsage:',err);}
+  try{if(m.type==='batchOptimize'){renderBatchOptimize(m);}}catch(err){console.error('batchOptimize:',err);}
   try{if(m.type==='routes'){renderRoutes(m);}}catch(err){console.error('routes:',err);}
   try{if(m.type==='codegenStatus'){renderCodegen(m);}}catch(err){console.error('codegen:',err);}
   try{if(m.type==='buildYamlError'){var byv=document.getElementById('build-yaml-view');if(byv)byv.innerHTML='<div style="color:#f85149;font-size:10px">'+E(m.error)+'</div>';}}catch(err){console.error('buildYamlError:',err);}
   try{if(m.type==='buildYamlSaved'){V.postMessage({type:'scanCodegen'});}}catch(err){console.error('buildYamlSaved:',err);}
+  try{if(m.type==='buildLog'){handleBuildLog(m);}}catch(err){console.error('buildLog:',err);}
+  try{if(m.type==='buildLogEnd'){handleBuildLogEnd(m);}}catch(err){console.error('buildLogEnd:',err);}
   try{if(m.type==='fileChanged'){platData=null;V.postMessage({type:'loadPlatform'});}}catch(err){console.error('fileChanged:',err);}
   try{if(m.type==='storageInfo'){storageData=m;renderStorage();}}catch(err){console.error('storage:',err);}
   try{if(m.type==='downloadTest'){renderDownloadTest(m);}}catch(err){console.error('downloadTest:',err);}

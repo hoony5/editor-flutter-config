@@ -178,6 +178,20 @@ export class ConfigViewProvider implements vscode.WebviewViewProvider {
         case 'assetOptimize':
           pubspecHandler.assetOptimize(root, m.cmd, m.file);
           break;
+        case 'scanAssetUsage':
+          pubspecHandler.scanAssetUsage(root, post);
+          break;
+        case 'batchOptimize':
+          pubspecHandler.batchOptimize(root, post);
+          break;
+        case 'runBatchScript': {
+          const scriptPath = path.join(root, '.batch_optimize.sh');
+          fs.writeFileSync(scriptPath, m.script, { mode: 0o755 });
+          const terminal = vscode.window.createTerminal({ name: 'Batch Optimize', cwd: root });
+          terminal.show();
+          terminal.sendText(`bash .batch_optimize.sh && rm -f .batch_optimize.sh`);
+          break;
+        }
         case 'scanRoutes':
           routerHandler.scanRoutes(root, post);
           break;
@@ -186,6 +200,12 @@ export class ConfigViewProvider implements vscode.WebviewViewProvider {
           break;
         case 'runBuildRunner':
           codegenHandler.runBuildRunner(root, m.mode, post);
+          break;
+        case 'runBuildRunnerStream':
+          codegenHandler.runBuildRunnerStream(root, post, m.mode);
+          break;
+        case 'stopBuildRunner':
+          codegenHandler.stopBuildRunner();
           break;
         case 'buildFilter':
           codegenHandler.runBuildFilter(root, m.file);

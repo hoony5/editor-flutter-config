@@ -8,7 +8,10 @@ function renderCodegen(m){
     '<button class="ib ib-p" id="br-build" title="build_runner build">'+IC.play+' build</button>'+
     '<button class="ib" id="br-watch" title="build_runner watch">'+IC.loop+' watch</button>'+
     '<button class="ib" id="br-clean" title="build_runner clean">'+IC.x+' clean</button>'+
+    '<button class="ib" id="br-stream" title="Stream build output here">'+IC.play+' stream</button>'+
+    '<button class="ib" id="br-stop" title="Stop build" style="display:none;color:#f85149">'+IC.x+' stop</button>'+
     '<button class="ib" id="br-refresh" title="Rescan">'+IC.refresh+'</button></div>';
+  h+='<div id="build-log" style="display:none;font-family:var(--vscode-editor-font-family,monospace);font-size:10px;line-height:1.5;background:#1e1e1e;color:#d4d4d4;border:1px solid var(--ib);border-radius:4px;padding:6px 8px;max-height:260px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;margin-bottom:8px"></div>';
   if(m.lastBuild){
     var d=new Date(m.lastBuild);
     h+='<div style="font-size:10px;opacity:.5;margin-bottom:8px">Last build: '+d.toLocaleString()+'</div>';
@@ -72,6 +75,12 @@ function renderCodegen(m){
   var bb=document.getElementById('br-build');if(bb)bb.addEventListener('click',function(){V.postMessage({type:'runBuildRunner',mode:'build'});});
   var bw=document.getElementById('br-watch');if(bw)bw.addEventListener('click',function(){V.postMessage({type:'runBuildRunner',mode:'watch'});});
   var bc=document.getElementById('br-clean');if(bc)bc.addEventListener('click',function(){V.postMessage({type:'runBuildRunner',mode:'clean'});});
+  var bs=document.getElementById('br-stream');if(bs)bs.addEventListener('click',function(){
+    var log=document.getElementById('build-log');if(log){log.innerHTML='';log.style.display='block';}
+    var stop=document.getElementById('br-stop');if(stop)stop.style.display='';
+    V.postMessage({type:'runBuildRunnerStream',mode:'build'});
+  });
+  var bst=document.getElementById('br-stop');if(bst)bst.addEventListener('click',function(){V.postMessage({type:'stopBuildRunner'});});
   var brf=document.getElementById('br-refresh');if(brf)brf.addEventListener('click',function(){V.postMessage({type:'scanCodegen'});});
   var be=document.getElementById('byaml-edit');if(be)be.addEventListener('click',function(){V.postMessage({type:'openFile',file:'build.yaml'});});
 }
@@ -97,5 +106,29 @@ function renderBuildYamlTree(obj,prefix){
     }
   });
   return h;
+}
+function handleBuildLog(m){
+  var log=document.getElementById('build-log');if(!log)return;
+  log.style.display='block';
+  var span=document.createElement('div');
+  span.textContent=m.line;
+  if(m.stream==='stderr')span.style.color='#f85149';
+  log.appendChild(span);
+  log.scrollTop=log.scrollHeight;
+}
+function handleBuildLogEnd(m){
+  var log=document.getElementById('build-log');
+  if(log){
+    var end=document.createElement('div');
+    end.style.marginTop='4px';
+    end.style.borderTop='1px solid #333';
+    end.style.paddingTop='4px';
+    end.style.color=m.exitCode===0?'#3fb950':'#f85149';
+    end.textContent='── build_runner exited with code '+m.exitCode+' ──';
+    log.appendChild(end);
+    log.scrollTop=log.scrollHeight;
+  }
+  var stop=document.getElementById('br-stop');if(stop)stop.style.display='none';
+  V.postMessage({type:'scanCodegen'});
 }
 `;

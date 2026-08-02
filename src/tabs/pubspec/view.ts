@@ -70,6 +70,11 @@ function renderPubspecAssets(m){
     '<input id="asset-new-path" placeholder="assets/new-folder/" style="flex:1;padding:3px 5px;background:var(--ibg);color:var(--ifg);border:1px solid var(--ib);border-radius:3px;font-size:11px">'+
     '<button class="ib ib-p" id="asset-add-btn" title="Add">'+IC.plus+'</button>'+
     '<button class="ib" id="asset-load-btn" title="Scan & auto-add">'+IC.refresh+'</button></div>';
+  h+='<div style="display:flex;gap:4px;margin-bottom:4px">'+
+    '<button class="ib" id="asset-usage-btn" title="Scan asset usage in Dart files" style="font-size:9px;padding:2px 6px">📊 Usage</button>'+
+    '<button class="ib" id="asset-batch-opt-btn" title="Generate batch WebP optimization script" style="font-size:9px;padding:2px 6px">⚡ Batch Optimize</button></div>';
+  h+='<div id="asset-usage-results" style="display:none;margin-bottom:8px"></div>';
+  h+='<div id="asset-batch-results" style="display:none;margin-bottom:8px"></div>';
   h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:10px;opacity:.6">'+
     '<span>Size</span><input type="range" id="asset-scale" min="1" max="5" step="1" value="'+_prevScale+'" style="flex:1;height:12px;accent-color:var(--bb)">'+
     '<span id="asset-scale-val">'+_prevScale+'x</span></div>';
@@ -130,6 +135,10 @@ function bindAssetToolbar(el){
   });
   var lb=document.getElementById('asset-load-btn');
   if(lb)lb.addEventListener('click',function(){V.postMessage({type:'loadAssetDirs'});});
+  var ub=document.getElementById('asset-usage-btn');
+  if(ub)ub.addEventListener('click',function(){V.postMessage({type:'scanAssetUsage'});});
+  var bo=document.getElementById('asset-batch-opt-btn');
+  if(bo)bo.addEventListener('click',function(){V.postMessage({type:'batchOptimize'});});
 }
 function renderAssetCard(dirRel,file,previews,fullPath){
   var rel=fullPath||(dirRel+file.name);var prev=previews[rel];
@@ -316,5 +325,47 @@ function renderAssetOpt(m){
   }
   if(!sugs.length&&!unusedFonts.length)h+='<div style="opacity:.4;padding:4px;font-size:10px">No optimization issues found.</div>';
   el.innerHTML=h;
+}
+function renderAssetUsage(m){
+  var el=document.getElementById('asset-usage-results');if(!el)return;
+  var usage=m.usage||[];
+  if(!usage.length){el.innerHTML='<div style="opacity:.4;font-size:10px;padding:4px">No assets found to analyze.</div>';el.style.display='block';return;}
+  var unusedCount=usage.filter(function(u){return u.unused;}).length;
+  var h='<div style="border:1px solid var(--ib);border-radius:4px;padding:6px;font-size:10px">';
+  h+='<div style="font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center">'+
+    '<span>📊 Asset Usage</span>'+
+    '<span style="font-size:9px;opacity:.5">'+usage.length+' assets · <span style="color:'+(unusedCount>0?'#f85149':'#3fb950')+'">'+unusedCount+' unused</span></span></div>';
+  h+='<div style="max-height:200px;overflow-y:auto">';
+  usage.forEach(function(u){
+    var color=u.unused?'#f85149':'var(--fg)';
+    var badge=u.unused?'<span style="background:#f8514922;color:#f85149;padding:1px 4px;border-radius:2px;font-size:8px">UNUSED</span>'
+      :'<span style="background:#3fb95022;color:#3fb950;padding:1px 4px;border-radius:2px;font-size:8px">'+u.referencedBy.length+' ref</span>';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--ib)">';
+    h+='<span style="color:'+color+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1" title="'+E(u.asset)+'">'+E(u.asset)+'</span>';
+    h+='<span style="margin-left:6px;flex-shrink:0">'+badge+'</span>';
+    h+='</div>';
+    if(!u.unused&&u.referencedBy.length<=3){
+      u.referencedBy.forEach(function(r){
+        h+='<div style="padding:1px 0 1px 12px;font-size:9px;opacity:.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+E(r)+'">↳ '+E(r)+'</div>';
+      });
+    }
+  });
+  h+='</div></div>';
+  el.innerHTML=h;el.style.display='block';
+}
+function renderBatchOptimize(m){
+  var el=document.getElementById('asset-batch-results');if(!el)return;
+  if(!m.script){el.innerHTML='<div style="opacity:.4;font-size:10px;padding:4px">No PNG/JPG files over 100KB found in assets/.</div>';el.style.display='block';return;}
+  var h='<div style="border:1px solid var(--ib);border-radius:4px;padding:6px;font-size:10px">';
+  h+='<div style="font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center">'+
+    '<span>⚡ Batch Optimize</span>'+
+    '<span style="font-size:9px;opacity:.5">'+m.fileCount+' files · savings: '+E(m.totalSavings)+'</span></div>';
+  h+='<pre style="background:var(--ibg);padding:6px;border-radius:3px;font-size:9px;line-height:1.4;overflow-x:auto;max-height:200px;overflow-y:auto;white-space:pre;margin:4px 0">'+E(m.script)+'</pre>';
+  h+='<div style="display:flex;gap:4px;justify-content:flex-end;margin-top:4px">'+
+    '<button class="ib ib-p" id="batch-run-btn" style="font-size:9px;padding:2px 8px">▶ Run in Terminal</button></div>';
+  h+='</div>';
+  el.innerHTML=h;el.style.display='block';
+  var rb=document.getElementById('batch-run-btn');
+  if(rb)rb.addEventListener('click',function(){V.postMessage({type:'runBatchScript',script:m.script});});
 }
 `;
