@@ -223,7 +223,12 @@ export class ConfigViewProvider implements vscode.WebviewViewProvider {
           await storageHandler.testDownload(root, post, m.path);
           break;
         case 'testDownloadAdb': {
-          const gradle = fs.readFileSync(path.join(root, 'android', 'app', 'build.gradle'), 'utf-8');
+          const gradlePath = path.join(root, 'android', 'app', 'build.gradle');
+          if (!fs.existsSync(gradlePath)) {
+            this.post({ type: 'downloadTest', success: false, path: m.path ?? '', elapsedMs: 0, error: 'android/app/build.gradle not found' });
+            break;
+          }
+          const gradle = fs.readFileSync(gradlePath, 'utf-8');
           const appId = gradle.match(/applicationId\s+["']([^"']+)["']/)?.[1] ?? '';
           await storageHandler.testDownloadAdb(post, appId, m.path);
           break;
