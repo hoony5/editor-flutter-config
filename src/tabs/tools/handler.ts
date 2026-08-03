@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
 import * as vscode from 'vscode';
 import { readManifest, getDartCmd } from '../../shared/execUtils';
 import { readText } from '../../shared/fileUtils';
-import { sanitizeShellArg } from '../../shared/security';
+import { sanitizeShellArg, safePath } from '../../shared/security';
 import { trackTerminal } from '../../shared/terminals';
 
 const RUNTIMES: Record<string, { lang: string; cmd: string }> = {
@@ -68,7 +68,7 @@ export function scanToolEntries(root: string): ScannedTool[] {
 }
 
 export function getToolCommand(root: string, file: string, runtime: string): string {
-  const safeFile = file.replace(/[;|&$`()[\]{}<>!#~]/g, '');
+  const safeFile = file.replace(/[^a-zA-Z0-9_./ -]/g, '');
   const q = `tool/${safeFile}`;
   const ext = path.extname(safeFile);
   const cmds: Record<string, string> = {
@@ -90,7 +90,14 @@ export function getToolCommand(root: string, file: string, runtime: string): str
   return cmds[ext] ?? `${runtime.replace(/[^a-zA-Z0-9_-]/g, '')} "${q}"`;
 }
 
+export function resolveToolFile(root: string, file: string): string | null {
+  const abs = safePath(path.join(root, 'tool'), file);
+  if (!abs || !fs.existsSync(abs)) return null;
+  return abs;
+}
+
 export function runScannedTool(root: string, file: string, runtime: string): void {
+  if (!resolveToolFile(root, file)) return;
   const cmd = getToolCommand(root, file, runtime);
   const name = file.split('/').pop() ?? file;
   const terminal = vscode.window.createTerminal({ name: `Tool: ${name}`, cwd: root });
@@ -99,6 +106,7 @@ export function runScannedTool(root: string, file: string, runtime: string): voi
 }
 
 export function runScannedToolLoop(root: string, file: string, runtime: string, intervalSec: number): void {
+  if (!resolveToolFile(root, file)) return;
   const sec = Math.max(1, Math.floor(Number(intervalSec)) || 60);
   const cmd = getToolCommand(root, file, runtime);
   const name = file.split('/').pop() ?? file;
@@ -134,6 +142,8 @@ export function runToolLoop(root: string, toolId: string, inputs: Record<string,
 
 export function runCodegenScript(root: string, file: string): void {
   const safeFile = file.replace(/[^a-zA-Z0-9_./-]/g, '');
+  const abs = safePath(root, safeFile);
+  if (!abs || !fs.existsSync(abs)) return;
   const cmd = path.extname(safeFile) === '.dart' ? `${getDartCmd(root)} run ${safeFile}` : `bash ${safeFile}`;
   const name = safeFile.split('/').pop() ?? safeFile;
   const terminal = vscode.window.createTerminal({ name: `Codegen: ${name}`, cwd: root });

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { getToolCommand } from '../src/tabs/tools/handler';
+import { getToolCommand, resolveToolFile } from '../src/tabs/tools/handler';
 
 let plainRoot: string;
 let wrapperRoot: string;
@@ -14,6 +14,8 @@ beforeAll(() => {
   fs.mkdirSync(binDir, { recursive: true });
   fs.writeFileSync(path.join(binDir, 'dartw'), '#!/bin/sh\n');
   fs.writeFileSync(path.join(binDir, 'flutterw'), '#!/bin/sh\n');
+  fs.mkdirSync(path.join(plainRoot, 'tool', 'dev'), { recursive: true });
+  fs.writeFileSync(path.join(plainRoot, 'tool', 'dev', 'deploy.sh'), '#!/bin/sh\n');
 });
 
 afterAll(() => {
@@ -118,5 +120,30 @@ describe('getToolCommand', () => {
  it('wraps path in double quotes for shell safety', () => {
  const cmd = getToolCommand(plainRoot, 'my scripts/deploy.sh', 'bash');
  expect(cmd).toBe('bash "tool/my scripts/deploy.sh"');
+ });
+
+ it('strips double quotes from file path', () => {
+ const cmd = getToolCommand(plainRoot, 'a"b.sh', 'bash');
+ expect(cmd).toBe('bash "tool/ab.sh"');
+ });
+
+ it('strips newlines and backslashes from file path', () => {
+ const cmd = getToolCommand(plainRoot, 'a\nb\\c.sh', 'bash');
+ expect(cmd).toBe('bash "tool/abc.sh"');
+ });
+});
+
+describe('resolveToolFile', () => {
+ it('resolves existing files under tool/', () => {
+ const abs = resolveToolFile(plainRoot, 'dev/deploy.sh');
+ expect(abs).toBe(path.join(plainRoot, 'tool', 'dev', 'deploy.sh'));
+ });
+
+ it('rejects path traversal outside tool/', () => {
+ expect(resolveToolFile(plainRoot, '../../etc/passwd')).toBeNull();
+ });
+
+ it('rejects nonexistent files', () => {
+ expect(resolveToolFile(plainRoot, 'dev/nope.sh')).toBeNull();
  });
 });
