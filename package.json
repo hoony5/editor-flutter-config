@@ -2,7 +2,7 @@
   "name": "editor-flutter-config",
   "displayName": "Flutter Project Settings",
   "description": "Flutter platform settings in one sidebar. AI-agent-ready CLI included.",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "publisher": "hoony5",
   "license": "Apache-2.0",
   "repository": {
