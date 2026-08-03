@@ -16,13 +16,13 @@ AI 에이전트가 JSON으로 프로젝트 컨텍스트를 로드할 수 있는 
 
 ## Screenshots
 
-| Permissions | Env | Assets |
+| Permissions | Tools | Pubspec |
 |---|---|---|
-| ![Permissions](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-1.png) | ![Env](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-2.png) | ![Assets](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-3.png) |
+| ![Permissions](https://github.com/hoony5/editor-flutter-config/raw/main/resources/permissions.png) | ![Tools](https://github.com/hoony5/editor-flutter-config/raw/main/resources/tools.png) | ![Pubspec](https://github.com/hoony5/editor-flutter-config/raw/main/resources/pubspec.png) |
 
-| Codegen | Router | Manage |
+| Codegen | Status | |
 |---|---|---|
-| ![Codegen](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-4.png) | ![Router](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-5.png) | ![Manage](https://github.com/hoony5/editor-flutter-config/raw/main/resources/screenshot-6.png) |
+| ![Codegen](https://github.com/hoony5/editor-flutter-config/raw/main/resources/codegen.png) | ![Status](https://github.com/hoony5/editor-flutter-config/raw/main/resources/status.png) | |
 
 ---
 
