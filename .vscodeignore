@@ -10,3 +10,6 @@ node_modules/**
 **/*.ts
 !out/**
 AGENTS.md
+resources/*.png
+!resources/icon.png
+!resources/activity-icon.png

@@ -11,7 +11,7 @@ AI 에이전트가 JSON으로 프로젝트 컨텍스트를 로드할 수 있는 
 **이런 상황에 유용**: Xcode/Android Studio 오가며 권한 설정할 때, env 파일 간 누락 키 찾을 때, codegen 돌렸는지 까먹었을 때, AI 에이전트에게 프로젝트 구조를 한 번에 알려줄 때.
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-106%20passing-brightgreen.svg)](test/)
+[![Tests](https://img.shields.io/badge/tests-111%20passing-brightgreen.svg)](test/)
 [![VSCode](https://img.shields.io/badge/VSCode-1.96%2B-007ACC.svg)](https://code.visualstudio.com)
 
 ## Screenshots
@@ -40,6 +40,15 @@ Auto-discovers all your env and config files (JSON and dotenv). Edit them inline
 
 ### Assets you can actually see
 Folder tree with thumbnails. Preview fonts with sample text, play audio, watch video. JSON, CSV, XML, Markdown files get syntax-highlighted previews. It'll even suggest converting that 2MB PNG to WebP.
+
+### Tools — run project scripts from the sidebar
+Create a `tool/<group>/` folder in your project and drop in entry-point scripts — then run them with one click.
+
+- Auto-scans `tool/*` for 20+ runtimes (Shell, Dart, Python, JS/TS, Go, Swift, Kotlin, …) and badges which are installed on your machine
+- ▶ runs in an integrated terminal; ⟳ repeats on an interval (loop mode)
+- A `README.md` inside a group folder renders inline as its description
+- `tool/manifest.yaml` registers categorized tools with descriptions and typed inputs (text/select/password)
+- Execution is confined to your project: paths must resolve inside `tool/`, script names are allowlist-sanitized before reaching the shell
 
 ### Codegen Hub
 Run `build_runner` from the sidebar. See all your `@freezed`, `@riverpod`, `@RestApi` annotations at a glance. Get warned when you've annotated a class but forgot to run the generator.
@@ -102,7 +111,7 @@ cd editor-flutter-config && npm install && npm run compile
 
 ```bash
 npm run compile     # build
-npm test            # 106 tests
+npm test            # 111 tests
 vsce publish patch  # ship it
 ```
 
