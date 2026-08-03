@@ -5,10 +5,12 @@ scripts/**
 tsconfig.json
 vitest.config.mts
 node_modules/**
-!node_modules/yaml/**
 **/*.map
 **/*.ts
-!out/**
+out/**
+!out/extension.js
+!out/cli.js
+!out/webview/main.js
 AGENTS.md
 resources/*.png
 !resources/icon.png

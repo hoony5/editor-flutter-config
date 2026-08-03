@@ -36,7 +36,7 @@ describe('webview main.js', () => {
   });
 
   it('defines state variables', () => {
-    expect(js).toContain('var D=null');
+    expect(js).toContain('D=null');
     expect(js).toContain('permState=');
     expect(js).toContain('permUsage=');
   });
@@ -52,15 +52,15 @@ describe('webview main.js', () => {
   });
 
   it('has message handler with try/catch isolation', () => {
-    expect(js).toContain("addEventListener('message'");
-    expect(js).toContain("catch(err){console.error('data:',err);}");
-    expect(js).toContain("catch(err){console.error('platform:',err);}");
+    expect(js).toContain('addEventListener("message"');
+    expect(js).toContain('console.error("data:"');
+    expect(js).toContain('console.error("platform:"');
   });
 
   it('has tab click handler', () => {
-    expect(js).toContain("querySelectorAll('.tab')");
-    expect(js).toContain("V.postMessage({type:'readPubspec'})");
-    expect(js).toContain("V.postMessage({type:'scanCodegen'})");
+    expect(js).toContain('querySelectorAll(".tab")');
+    expect(js).toContain('type:"readPubspec"');
+    expect(js).toContain('type:"scanCodegen"');
   });
 
   it('sends loadData on init', () => {

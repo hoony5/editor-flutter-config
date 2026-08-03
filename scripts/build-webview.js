@@ -46,8 +46,8 @@ const fullJs = fragments.join('\n');
 const webviewDir = path.join(outDir, 'webview');
 if (!fs.existsSync(webviewDir)) fs.mkdirSync(webviewDir, { recursive: true });
 
-esbuild.transformSync(fullJs, { minify: true, target: 'es2020' });
-fs.writeFileSync(path.join(webviewDir, 'main.js'), fullJs);
+const min = esbuild.transformSync(fullJs, { minify: true, target: 'es2020' });
+fs.writeFileSync(path.join(webviewDir, 'main.js'), min.code);
 
 try {
   new Function(fullJs);
