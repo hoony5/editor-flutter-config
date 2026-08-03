@@ -20,9 +20,9 @@ AI 에이전트가 JSON으로 프로젝트 컨텍스트를 로드할 수 있는 
 |---|---|---|
 | ![Permissions](https://github.com/hoony5/editor-flutter-config/raw/main/resources/permissions.png) | ![Tools](https://github.com/hoony5/editor-flutter-config/raw/main/resources/tools.png) | ![Pubspec](https://github.com/hoony5/editor-flutter-config/raw/main/resources/pubspec.png) |
 
-| Codegen | Status | |
-|---|---|---|
-| ![Codegen](https://github.com/hoony5/editor-flutter-config/raw/main/resources/codegen.png) | ![Status](https://github.com/hoony5/editor-flutter-config/raw/main/resources/status.png) | |
+| Codegen | Status |
+|---|---|
+| ![Codegen](https://github.com/hoony5/editor-flutter-config/raw/main/resources/codegen.png) | ![Status](https://github.com/hoony5/editor-flutter-config/raw/main/resources/status.png) |
 
 ---
 
