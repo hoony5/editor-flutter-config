@@ -83,6 +83,14 @@ export class ConfigViewProvider implements vscode.WebviewViewProvider {
         case 'openFile':
           this.openFile(m.file);
           break;
+        case 'copyAssetPath': {
+          const p = pubspecHandler.resolveAssetCopyPath(root, m.file ?? '', m.mode === 'absolute' ? 'absolute' : 'relative');
+          if (p) {
+            void vscode.env.clipboard.writeText(p);
+            void vscode.window.showInformationMessage(`Copied: ${p}`);
+          }
+          break;
+        }
         case 'composeRun':
           envHandler.composeAndRun(root, m.target);
           break;
@@ -261,6 +269,16 @@ export class ConfigViewProvider implements vscode.WebviewViewProvider {
     this.post({ type: 'data', manifest, envFiles, scannedTools: [], pubspec: null });
   }
 
+  private openColumn: number | undefined;
+
+  private targetColumn(): number {
+    const groups = vscode.window.tabGroups.all.length;
+    if (this.openColumn !== undefined && this.openColumn <= Math.max(groups, 1)) return this.openColumn;
+    const active = vscode.window.activeTextEditor?.viewColumn;
+    this.openColumn = active !== undefined ? active + 1 : groups > 0 ? groups + 1 : vscode.ViewColumn.One;
+    return this.openColumn;
+  }
+
   private openFile(file: string): void {
     const filePath = safePath(this.root, file);
     if (!filePath || !fs.existsSync(filePath)) {
@@ -268,8 +286,9 @@ export class ConfigViewProvider implements vscode.WebviewViewProvider {
       return;
     }
     vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath), {
-      viewColumn: vscode.ViewColumn.Beside,
+      viewColumn: this.targetColumn(),
       preview: true,
+      preserveFocus: true,
     });
   }
 
@@ -277,7 +296,7 @@ export class ConfigViewProvider implements vscode.WebviewViewProvider {
     const filePath = safePath(this.root, file);
     if (!filePath || !fs.existsSync(filePath)) return;
     vscode.window.showTextDocument(vscode.Uri.file(filePath), {
-      viewColumn: vscode.ViewColumn.Beside,
+      viewColumn: this.targetColumn(),
       preview: true,
       selection: new vscode.Range(Math.max(0, line - 1), 0, Math.max(0, line - 1), 0),
     });
