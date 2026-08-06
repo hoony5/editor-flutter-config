@@ -11,7 +11,7 @@ AI 에이전트가 JSON으로 프로젝트 컨텍스트를 로드할 수 있는 
 **이런 상황에 유용**: Xcode/Android Studio 오가며 권한 설정할 때, env 파일 간 누락 키 찾을 때, codegen 돌렸는지 까먹었을 때, AI 에이전트에게 프로젝트 구조를 한 번에 알려줄 때.
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-111%20passing-brightgreen.svg)](test/)
+[![Tests](https://img.shields.io/badge/tests-115%20passing-brightgreen.svg)](test/)
 [![VSCode](https://img.shields.io/badge/VSCode-1.96%2B-007ACC.svg)](https://code.visualstudio.com)
 
 ## Screenshots
@@ -39,7 +39,7 @@ Dangerous settings (looking at you, `NSAllowsArbitraryLoads`) get flagged with a
 Auto-discovers all your env and config files (JSON and dotenv). Edit them inline, compare two files side-by-side to spot missing keys, and run with `--dart-define-from-file` in one click.
 
 ### Assets you can actually see
-Folder tree with thumbnails. Preview fonts with sample text, play audio, watch video. JSON, CSV, XML, Markdown files get syntax-highlighted previews. It'll even suggest converting that 2MB PNG to WebP.
+Folder tree with thumbnails. Preview fonts with sample text, play audio, watch video. JSON, CSV, XML, Markdown files get syntax-highlighted previews. It'll even suggest converting that 2MB PNG to WebP. Copy any asset's path — relative or absolute — from the copy button or right-click menu.
 
 ### Tools — run project scripts from the sidebar
 Create a `tool/<group>/` folder in your project and drop in entry-point scripts — then run them with one click.
@@ -111,7 +111,7 @@ cd editor-flutter-config && npm install && npm run compile
 
 ```bash
 npm run compile     # build
-npm test            # 111 tests
+npm test            # 115 tests
 vsce publish patch  # ship it
 ```
 

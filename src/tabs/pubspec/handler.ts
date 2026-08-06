@@ -140,6 +140,12 @@ export function getAssetPreviewData(root: string, post: PostFn, filePath: string
   post({ type: 'assetPreview', filePath, data: `Binary file\nSize: ${fmtBytes(stat.size)}`, previewType: 'info', sizeBytes: stat.size });
 }
 
+export function resolveAssetCopyPath(root: string, file: string, mode: 'relative' | 'absolute'): string | null {
+  const abs = safePath(root, file);
+  if (!abs || !fs.existsSync(abs)) return null;
+  return mode === 'absolute' ? abs : path.relative(root, abs).replace(/\\/g, '/');
+}
+
 function fmtBytes(b: number): string {
   if (b < 1024) return `${b} B`;
   if (b < 1048576) return `${(b / 1024).toFixed(1)} KB`;

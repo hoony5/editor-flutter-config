@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { parsePubspecFull } from '../src/tabs/pubspec/handler';
+import { parsePubspecFull, resolveAssetCopyPath } from '../src/tabs/pubspec/handler';
 
 let tmpDir: string;
 
@@ -81,5 +81,30 @@ describe('parsePubspecFull', () => {
     const result = parsePubspecFull(noDir);
     expect(result.name).toBe('');
     expect(result.deps).toHaveLength(0);
+  });
+});
+
+describe('resolveAssetCopyPath', () => {
+  beforeAll(() => {
+    fs.mkdirSync(path.join(tmpDir, 'assets', 'images'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, 'assets', 'images', 'logo.png'), 'x');
+  });
+
+  it('returns relative path in relative mode', () => {
+    expect(resolveAssetCopyPath(tmpDir, 'assets/images/logo.png', 'relative'))
+      .toBe('assets/images/logo.png');
+  });
+
+  it('returns absolute path in absolute mode', () => {
+    expect(resolveAssetCopyPath(tmpDir, 'assets/images/logo.png', 'absolute'))
+      .toBe(path.join(tmpDir, 'assets', 'images', 'logo.png'));
+  });
+
+  it('rejects path traversal', () => {
+    expect(resolveAssetCopyPath(tmpDir, '../../etc/passwd', 'relative')).toBeNull();
+  });
+
+  it('rejects nonexistent files', () => {
+    expect(resolveAssetCopyPath(tmpDir, 'assets/nope.png', 'relative')).toBeNull();
   });
 });

@@ -119,6 +119,8 @@ function renderPubspecAssets(m){
     panel.innerHTML='<div style="opacity:.5;font-size:10px">Loading...</div>';wrap.style.display='block';
     V.postMessage({type:'getAssetPreview',filePath:b.dataset.preview});
   });});
+  el.querySelectorAll('.asset-copy-btn').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();showCopyMenu(b.dataset.copy,e.clientX,e.clientY);});});
+  el.querySelectorAll('.asset-card').forEach(function(c){c.addEventListener('contextmenu',function(e){e.preventDefault();showCopyMenu(c.dataset.file,e.clientX,e.clientY);});});
   var cb=document.getElementById('panel-collapse');
   if(cb)cb.addEventListener('click',function(){
     _panelCollapsed=!_panelCollapsed;
@@ -140,6 +142,30 @@ function bindAssetToolbar(el){
   var bo=document.getElementById('asset-batch-opt-btn');
   if(bo)bo.addEventListener('click',function(){V.postMessage({type:'batchOptimize'});});
 }
+function showCopyMenu(file,x,y){
+  hideCopyMenu();
+  var menu=document.createElement('div');
+  menu.id='copy-menu';
+  menu.style.cssText='position:fixed;z-index:999;background:var(--ibg);border:1px solid var(--ib);border-radius:4px;padding:2px;box-shadow:0 4px 12px rgba(0,0,0,.4)';
+  menu.style.left=Math.min(x,window.innerWidth-150)+'px';
+  menu.style.top=Math.min(y,window.innerHeight-60)+'px';
+  function item(label,mode){
+    var b=document.createElement('button');
+    b.className='btn btn-s';
+    b.style.cssText='display:block;width:100%;text-align:left;font-size:10px;margin:1px 0;padding:3px 8px';
+    b.textContent=label;
+    b.addEventListener('click',function(){V.postMessage({type:'copyAssetPath',file:file,mode:mode});hideCopyMenu();});
+    return b;
+  }
+  menu.appendChild(item('Copy relative path','relative'));
+  menu.appendChild(item('Copy absolute path','absolute'));
+  document.body.appendChild(menu);
+  setTimeout(function(){document.addEventListener('click',hideCopyMenu,{once:true});},0);
+}
+function hideCopyMenu(){
+  var m=document.getElementById('copy-menu');
+  if(m)m.remove();
+}
 function renderAssetCard(dirRel,file,previews,fullPath){
   var rel=fullPath||(dirRel+file.name);var prev=previews[rel];
   var icons={image:'🖼',audio:'🔊',video:'🎬',font:'Aa',data:'{}',animation:'✨',other:'📄'};
@@ -155,6 +181,7 @@ function renderAssetCard(dirRel,file,previews,fullPath){
   h+='<div style="display:flex;justify-content:center;gap:2px;margin-top:2px">';
   h+='<span style="font-size:7px;opacity:.4">'+fmtB(file.sizeBytes)+'</span>';
   h+='<button class="ib asset-prev-btn" data-preview="'+E(rel)+'" title="Preview" style="padding:2px 5px">'+IC.eye+'</button>';
+  h+='<button class="ib asset-copy-btn" data-copy="'+E(rel)+'" title="Copy path" style="padding:2px 5px">'+IC.copy+'</button>';
   h+='</div></div>';
   return h;
 }
